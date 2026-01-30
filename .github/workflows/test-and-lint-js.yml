@@ -7,7 +7,6 @@ on:
     paths:
       - '**.js'
       - '**.ts'
-      - '**.vue'
       - 'src/package.json'
       - 'src/package.lock'
 
