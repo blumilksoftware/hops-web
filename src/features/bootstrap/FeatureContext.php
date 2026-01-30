@@ -1,15 +1,14 @@
 <?php
 
 use Behat\Behat\Context\Context;
+use Blumilk\BLT\Features\Toolbox;
+use Blumilk\BLT\Bootstrapping\LaravelBootstrapper;
 
-class FeatureContext implements Context
+class FeatureContext extends Toolbox implements Context
         {
-            use \Blumilk\BLT\Features\Traits\Http;
-            use \Blumilk\BLT\Features\Traits\Eloquent;
-
             public function __construct()
             {
-                $bootstrapper = new \Blumilk\BLT\Bootstrapping\LaravelBootstrapper();
+                $bootstrapper = new LaravelBootstrapper();
                 $bootstrapper->setBasePath(realpath(__DIR__ . "/../.."));
                 $bootstrapper->boot();
             }
