@@ -5,8 +5,6 @@ networks:
       external: true
 
 volumes:
-    hops-web-postgres-data:
-        name: hops-web-postgres-data
     hops-web-redis-data:
         name: hops-web-redis-data
 
@@ -53,30 +51,6 @@ services:
         networks:
             - hops-web-dev
             - traefik-proxy-blumilk-local-environment
-        restart: unless-stopped
-        depends_on:
-            database:
-                condition: service_healthy
-
-    database:
-        image: postgres:16.3-alpine3.18@sha256:64e18e8fb3e9c9aac89ac590c5dd8306b862478404f76cd9b5f7720d012b4c47
-        container_name: hops-web-db-dev
-        environment:
-            - POSTGRES_USER=${DB_USERNAME}
-            - POSTGRES_PASSWORD=${DB_PASSWORD}
-            - POSTGRES_DB=${DB_DATABASE}
-            - PGDATA=/var/lib/postgresql/data
-        healthcheck:
-            test: [ "CMD-SHELL", "pg_isready --dbname ${DB_DATABASE} --username ${DB_USERNAME}"]
-            interval: 3s
-            timeout: 3s
-            retries: 5
-        ports:
-            - ${DOCKER_DATABASE_HOST_PORT:-63853}:5432
-        volumes:
-            - hops-web-postgres-data:/var/lib/postgresql/data
-        networks:
-            - hops-web-dev
         restart: unless-stopped
 
     mailpit:
