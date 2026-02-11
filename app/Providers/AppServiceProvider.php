@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ExampleApp\Providers;
+namespace HopsWeb\Providers;
 
 use Illuminate\Support\ServiceProvider;
 

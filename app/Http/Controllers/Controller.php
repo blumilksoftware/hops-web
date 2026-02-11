@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ExampleApp\Http\Controllers;
+namespace HopsWeb\Http\Controllers;
 
 abstract class Controller
 {

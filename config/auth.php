@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use ExampleApp\Models\User;
+use HopsWeb\Models\User;
 
 return [
     "defaults" => [

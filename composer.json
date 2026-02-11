@@ -1,7 +1,7 @@
 {
-    "name": "blumilksoftware/example-app",
+    "name": "blumilksoftware/hops-web",
     "type": "project",
-    "description": "example-app project.",
+    "description": "Hops application",
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
@@ -25,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "ExampleApp\\": "app/",
+            "HopsWeb\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ExampleApp\Models;
+namespace HopsWeb\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

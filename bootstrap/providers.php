@@ -1,7 +1,7 @@
 <?php
 
 declare(strict_types=1);
-use ExampleApp\Providers\AppServiceProvider;
+use HopsWeb\Providers\AppServiceProvider;
 
 return [
     AppServiceProvider::class,
