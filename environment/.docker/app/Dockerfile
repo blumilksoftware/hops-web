@@ -23,7 +23,7 @@ RUN apt-get update \
         supervisor \
         libpq-dev \
     && docker-php-ext-install \
-        pdo_pgsql 
+        pdo_pgsql
 
 COPY ./environment/.docker/app/entrypoint.sh /entrypoint.sh
 COPY ./environment/.docker/app/nginx.conf /etc/nginx/nginx.conf
@@ -51,6 +51,13 @@ RUN adduser \
         --groups \
         ${PHP_FPM_GROUP} \
         ${USER_NAME}
+
+
+# Add & configure SQLite database
+RUN mkdir -p database/sqlite && \
+    touch database/sqlite/database.sqlite && \
+    chown -R www-data:www-data database/sqlite && \
+    chmod -R 755 database/sqlite
 
 # Add node, npm, npx binaries
 COPY --from=node --chown=${USER_NAME}:root /usr/local/lib/node_modules /usr/local/lib/node_modules

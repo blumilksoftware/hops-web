@@ -7,6 +7,8 @@ networks:
 volumes:
     hops-web-redis-data:
         name: hops-web-redis-data
+    sqlite_data:
+        name: sqlite_data
 
 services:
     app:
@@ -46,6 +48,7 @@ services:
           - ./environment/local/app/php-fpm.conf:/usr/local/etc/php-fpm.d/zzz-overrides.conf:ro
           - ./environment/local/app/supervisord.conf:/etc/supervisor/custom-supervisord.conf:ro
           - .:/application
+          - sqlite_data:/application/database/sqlite
         ports:
             - ${DOCKER_APP_HOST_PORT:-63851}:80
         networks:
@@ -76,6 +79,7 @@ services:
       ports:
         - ${DOCKER_MAILPIT_DASHBOARD_HOST_PORT:-63854}:8025
       restart: unless-stopped
+
 
     redis:
         image: redis:7.2.5-alpine3.19@sha256:8f157725f8eee31e65a8d4765f1f986d76aedc1a0503345dfb63a2b1b5a441ee

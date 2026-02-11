@@ -29,7 +29,7 @@ tasks:
       - cmd: "{{.DOCKER_EXEC_USER}} composer install"
       - task: _set-app-key
       - cmd: "{{.DOCKER_EXEC_USER}} npm install"
-      - cmd: "{{.DOCKER_EXEC_USER}} php artisan migrate"
+      - cmd: "docker compose exec --user www-data $DOCKER_COMPOSE_APP_CONTAINER php artisan migrate"
 
   vite:
     desc: "Run Vite dev server"
@@ -94,9 +94,9 @@ tasks:
       - cmd: "{{.DOCKER_EXEC_USER}} php artisan {{.CLI_ARGS}}"
 
   test:
-    desc: "Run pest tests"
+    desc: "Run PHPUnit tests"
     cmds:
-      - cmd: "{{.DOCKER_EXEC_USER}} vendor/bin/pest {{.CLI_ARGS}}"
+      - cmd: "{{.DOCKER_EXEC_USER}} vendor/bin/phpunit {{.CLI_ARGS}}"
 
   fix:
     desc: "Run fixers"
@@ -108,6 +108,11 @@ tasks:
     desc: "Run queue:work"
     cmds:
       - cmd: "{{.DOCKER_EXEC_USER}} php artisan queue:work"
+
+  migrate:
+    desc: "Run migrations"
+    cmds:
+      - cmd: "docker compose exec --user www-data $DOCKER_COMPOSE_APP_CONTAINER php artisan migrate"
 
   _set-app-key:
     desc: "Create APP_KEY if not set"
