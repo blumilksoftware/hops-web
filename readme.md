@@ -74,3 +74,61 @@ The administration panel provides full CRUD functionality for managing users and
 The web application is implemented using the Laravel framework and deployed in a Dockerized environment. SQLite may be used as the initial persistence layer. Frontend should be implemented using a lightweight mechanism; Blade templates with Alpine.js should be considered. Given the potentially high volume of concurrent comparison requests, a background job and queue mechanism should be considered.
 
 Behavior-driven tests are implemented using Behat. The comparison engine is developed in Python and exposed via a well-defined interface, requiring a reliable inter-process or service-based communication mechanism for submitting queries and retrieving results.
+
+---
+
+## Run the project
+
+Make sure you have **Docker** and **Docker Compose** installed.
+
+### 1. Initialize the environment file
+
+```bash
+cp .env.example .env
+```
+
+### 2. Start the project
+
+If you have [Taskfile](https://taskfile.dev/) installed, run:
+
+```bash
+task init
+```
+
+Otherwise, run the commands manually:
+
+```bash
+docker compose up --build -d
+docker compose exec app composer install
+docker compose exec app npm install
+docker compose exec app php artisan migrate
+```
+
+To start development server, run:
+
+```bash
+task vite
+```
+
+or
+```bash
+docker compose exec app npm run dev
+```
+
+### 3. Access the application
+
+
+
+The application should now be available at:
+
+```text
+https://hops-web.blumilk.local.env/
+```
+
+---
+
+## Stop the project
+To stop the containers, run:
+```bash
+docker compose down
+```

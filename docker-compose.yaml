@@ -1,0 +1,93 @@
+networks:
+    hops-web-dev:
+        driver: bridge
+    traefik-proxy-blumilk-local-environment:
+      external: true
+
+volumes:
+    hops-web-redis-data:
+        name: hops-web-redis-data
+    sqlite_data:
+        name: sqlite_data
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: environment/.docker/app/Dockerfile
+            target: local
+            args:
+                - INSTALL_XDEBUG=${DOCKER_INSTALL_XDEBUG:-true}
+                - USER_ID=${DOCKER_HOST_USER_ID:-1000}
+        labels:
+            - "traefik.enable=true"
+            - "traefik.blumilk.local.environment=true"
+            # HTTP
+            - "traefik.http.routers.hops-web-http-router.rule=Host(`${APP_DOMAIN}`)"
+            - "traefik.http.routers.hops-web-http-router.entrypoints=web"
+            - "traefik.http.routers.hops-web-http-router.service=hops-web"
+          # HTTP to HTTPS redirect
+            #      - "traefik.http.routers.hops-web-http-router.middlewares=https-redirect@file"
+            # HTTPS
+            - "traefik.http.routers.hops-web-https-router.rule=Host(`${APP_DOMAIN}`)"
+            - "traefik.http.routers.hops-web-https-router.entrypoints=websecure"
+            - "traefik.http.routers.hops-web-https-router.tls=true"
+            - "traefik.http.routers.hops-web-https-router.service=hops-web"
+            # APP LOADBALANCER
+            - "traefik.http.services.hops-web.loadbalancer.server.port=80"
+            # VITE DEV SERVER
+            - "traefik.http.routers.hops-web-vite-dev-server-https-router.rule=Host(`${VITE_DEV_SERVER_DOCKER_HOST_NAME}`)"
+            - "traefik.http.routers.hops-web-vite-dev-server-https-router.entrypoints=websecure"
+            - "traefik.http.routers.hops-web-vite-dev-server-https-router.tls=true"
+            - "traefik.http.routers.hops-web-vite-dev-server-https-router.service=hops-web-vite-dev-server"
+            - "traefik.http.services.hops-web-vite-dev-server.loadbalancer.server.port=5173"
+        container_name: hops-web-app-dev
+        working_dir: /application
+        volumes:
+          - ./environment/local/app/php.ini:/usr/local/etc/php/conf.d/zzz-overrides.ini:ro
+          - ./environment/local/app/php-fpm.conf:/usr/local/etc/php-fpm.d/zzz-overrides.conf:ro
+          - ./environment/local/app/supervisord.conf:/etc/supervisor/custom-supervisord.conf:ro
+          - .:/application
+          - sqlite_data:/application/database/sqlite
+        ports:
+            - ${DOCKER_APP_HOST_PORT:-63851}:80
+        networks:
+            - hops-web-dev
+            - traefik-proxy-blumilk-local-environment
+        restart: unless-stopped
+
+    mailpit:
+      image: axllent/mailpit:v1.27.11@sha256:e22dce5b36f93c77082e204a3942fb6b283b7896e057458400a4c88344c3df68
+      container_name: hops-web-mailpit-dev
+      labels:
+        - "traefik.enable=true"
+        - "traefik.blumilk.environment=true"
+        # HTTP
+        - "traefik.http.routers.hops-web-mailpit-http-router.rule=Host(`hops-web-mailpit.blumilk.localhost`)"
+        - "traefik.http.routers.hops-web-mailpit-http-router.entrypoints=web"
+        # HTTP to HTTPS redirect
+        #      - "traefik.http.routers.hops-web-mailpit-http-router.middlewares=https-redirect@file"
+        # HTTPS
+        - "traefik.http.routers.hops-web-mailpit-https-router.rule=Host(`hops-web-mailpit.blumilk.localhost`)"
+        - "traefik.http.routers.hops-web-mailpit-https-router.entrypoints=websecure"
+        - "traefik.http.routers.hops-web-mailpit-https-router.tls=true"
+        # LOADBALANCER MAILPIT PORT
+        - "traefik.http.services.hops-web-mailpit.loadbalancer.server.port=8025"
+      networks:
+        - hops-web-dev
+        - traefik-proxy-blumilk-local-environment
+      ports:
+        - ${DOCKER_MAILPIT_DASHBOARD_HOST_PORT:-63854}:8025
+      restart: unless-stopped
+
+
+    redis:
+        image: redis:7.2.5-alpine3.19@sha256:8f157725f8eee31e65a8d4765f1f986d76aedc1a0503345dfb63a2b1b5a441ee
+        container_name: hops-web-redis-dev
+        ports:
+            - ${DOCKER_REDIS_HOST_PORT:-63852}:6379
+        volumes:
+            - hops-web-redis-data:/data
+        networks:
+            - hops-web-dev
+        restart: unless-stopped
