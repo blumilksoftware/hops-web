@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       strictPort: true,
       origin: 'https://' + env.VITE_DEV_SERVER_DOCKER_HOST_NAME,
+      cors: true,
     },
     plugins: [
       laravel({
