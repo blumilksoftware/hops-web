@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use HopsWeb\Models\Hop;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class DemoSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call(DemoSeeder::class);
+        Hop::factory(50)->create();
     }
 }
