@@ -8,12 +8,12 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        using: function(): void {
+        using: function (): void {
             Route::middleware("web")->group(function (): void {
-            Route::group([], __DIR__ . "/../routes/web.php");
-            Route::group([], __DIR__ . "/../routes/auth.php");
-        });
-    },
+                Route::group([], __DIR__ . "/../routes/web.php");
+                Route::group([], __DIR__ . "/../routes/auth.php");
+            });
+        },
         commands: __DIR__ . "/../routes/console.php",
         health: "/up",
     )
