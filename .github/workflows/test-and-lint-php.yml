@@ -38,7 +38,6 @@ jobs:
         uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # 2.36.0 # https://github.com/shivammathur/setup-php
         with:
           php-version: ${{ env.PHP_VERSION }}
-          extensions: dom, curl, libxml, mbstring, pdo_sqlite
           coverage: none
 
       - name: Install Composer dependencies
