@@ -5,14 +5,11 @@ declare(strict_types=1);
 namespace Tests\Feature\Auth;
 
 use HopsWeb\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class PasswordUpdateTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function testPasswordCanBeUpdated(): void
     {
         $user = User::factory()->create();
