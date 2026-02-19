@@ -1,16 +1,16 @@
 FROM registry.blumilk.pl/internal-public/secops-tools-bin:v1.2.0@sha256:be2755b1afeeae009abdeeb61b7214776776df5b50c818c1546072563139d12c AS secops-tools-bin
-FROM composer:2.9.3@sha256:f746ca10fd351429e13a6fc9599ccd41d4fc413e036ae8b0dad9e2041adcffcd AS composer
-FROM ghcr.io/php/pie:1.3.5-bin@sha256:22847c506640f5e8351850334b009da485c57db6ea245515759968911ae6d348 AS pie-bin
-FROM node:24.12.0-bookworm-slim@sha256:b83af04d005d8e3716f542469a28ad2947ba382f6b4a76ddca0827a21446a540 AS node
+FROM composer:2.9.5 AS composer
+FROM ghcr.io/php/pie:1.3.8-bin AS pie-bin
+FROM node:24.13.1-trixie-slim AS node
 
-FROM php:8.4.16-fpm-bookworm@sha256:17f936aab6398c83c89a7c234118183004fda951e127c32d798014d30e54d08c AS base
+FROM php:8.5.3-fpm-trixie AS base
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY --from=pie-bin /pie /usr/bin/pie
 
 # For other versions check: https://nginx.org/packages/mainline/debian/pool/nginx/n/nginx/
 # renovate: datasource=github-tags depName=nginx/nginx extractVersion=^release-(?<version>.*)$
-ARG NGINX_VERSION="1.29.4"
+ARG NGINX_VERSION="1.29.5"
 
 # renovate: datasource=github-tags depName=phpredis/phpredis
 ARG PHPREDIS_VERSION=6.3.0
@@ -18,9 +18,9 @@ ARG PHPREDIS_VERSION=6.3.0
 RUN apt-get update \
     && apt-get install --assume-yes gpg \
     && curl https://nginx.org/keys/nginx_signing.key | gpg --dearmour --output /etc/apt/trusted.gpg.d/apt.nginx.org.gpg > /dev/null \
-    && echo "deb https://nginx.org/packages/mainline/debian bookworm nginx" | tee /etc/apt/sources.list.d/nginx.list \
+    && echo "deb https://nginx.org/packages/mainline/debian trixie nginx" | tee /etc/apt/sources.list.d/nginx.list \
     && apt-get update && apt-get install --assume-yes \
-        nginx=${NGINX_VERSION}-1~bookworm \
+        nginx=${NGINX_VERSION}-1~trixie \
         zip \
         libzip-dev \
         supervisor \
@@ -34,6 +34,14 @@ WORKDIR /application
 ENTRYPOINT ["/entrypoint.sh"]
 
 FROM base AS local
+
+# renovate: datasource=github-tags depName=xdebug/xdebug
+ARG XDEBUG_VERSION=3.5.1
+ARG INSTALL_XDEBUG=true
+
+RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+    pie install xdebug/xdebug:${XDEBUG_VERSION} \
+;fi
 
 COPY --from=secops-tools-bin /usr/local/bin/age /usr/local/bin/age-keygen /usr/local/bin/sops /usr/local/bin/
 
@@ -53,13 +61,6 @@ RUN adduser \
         ${PHP_FPM_GROUP} \
         ${USER_NAME}
 
-
-# Add & configure SQLite database
-RUN mkdir -p database/sqlite && \
-    touch database/sqlite/database.sqlite && \
-    chown -R www-data:www-data database/sqlite && \
-    chmod -R 755 database/sqlite
-
 # Add node, npm, npx binaries
 COPY --from=node --chown=${USER_NAME}:root /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=node --chown=${USER_NAME}:root /usr/local/bin/node /usr/local/bin/node
@@ -67,14 +68,6 @@ RUN ln --symbolic /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/
     && chown --no-dereference ${USER_NAME}:root /usr/local/bin/npm \
     && ln --symbolic /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx \
     && chown --no-dereference ${USER_NAME}:root /usr/local/bin/npx
-
-# renovate: datasource=github-tags depName=xdebug/xdebug
-ARG XDEBUG_VERSION=3.5.1
-ARG INSTALL_XDEBUG=false
-
-RUN if [ ${INSTALL_XDEBUG} = true ]; then \
-    pie install xdebug/xdebug:${XDEBUG_VERSION} \
-;fi
 
 FROM composer AS vendor-build
 
@@ -100,11 +93,11 @@ ENV ENVIRONMENT=${ENVIRONMENT_ARG}
 # last position is target directory
 COPY package.json \
     package-lock.json \
-    postcss.config.js \
+    eslint.config.js \
+    tailwind.config.js \
+    tsconfig.json \
     vite.config.js \
     ./
-
-COPY ./environment/${ENVIRONMENT}/app/vite.${ENVIRONMENT}.env .env
 
 RUN npm clean-install
 
@@ -118,9 +111,6 @@ FROM base AS production
 
 ARG ENVIRONMENT_ARG
 ENV ENVIRONMENT=${ENVIRONMENT_ARG}
-
-RUN docker-php-ext-install \
-    opcache
 
 RUN mv "${PHP_INI_DIR}/php.ini-production" "${PHP_INI_DIR}/php.ini"
 
@@ -139,7 +129,9 @@ COPY --chown=www-data:www-data . .
 
 # Remove unnecessary files
 RUN rm --recursive --force \
-    postcss.config.js \
+    eslint.config.js \
+    tailwind.config.js \
+    tsconfig.json \
     vite.config.js \
     .dockerignore \
     environment/.docker \
