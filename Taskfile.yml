@@ -118,7 +118,7 @@ tasks:
   create-sqlite-db:
     desc: "Create SQLite database file if not exists"
     cmds:
-      - cmd: "{{.DOCKER_EXEC_ROOT}} mkdir -p database/sqlite && touch database/sqlite/database.sqlite"
+      - cmd: "{{.DOCKER_EXEC_USER}} mkdir -p database/sqlite && touch database/sqlite/database.sqlite"
 
   _set-app-key:
     desc: "Create APP_KEY if not set"
