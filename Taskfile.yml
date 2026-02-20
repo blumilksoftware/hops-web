@@ -119,8 +119,6 @@ tasks:
     desc: "Create SQLite database file if not exists"
     cmds:
       - cmd: "{{.DOCKER_EXEC_ROOT}} mkdir -p database/sqlite && touch database/sqlite/database.sqlite"
-      - cmd: "{{.DOCKER_EXEC_ROOT}} chown -R $CURRENT_USER_ID:$CURRENT_USER_ID database/sqlite"
-      - cmd: "{{.DOCKER_EXEC_ROOT}} chmod 664 database/sqlite/database.sqlite"
 
   _set-app-key:
     desc: "Create APP_KEY if not set"
