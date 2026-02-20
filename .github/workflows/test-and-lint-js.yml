@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       # renovate: datasource=node-version depName=node
-      NODE_VERSION: 24.12.0
+      NODE_VERSION: 24.13.1
 
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1 # https://github.com/actions/checkout
