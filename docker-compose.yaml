@@ -7,8 +7,8 @@ networks:
 volumes:
     hops-web-redis-data:
         name: hops-web-redis-data
-    sqlite_data:
-        name: sqlite_data
+    hops-web-mailpit-data:
+      name: hops-web-mailpit-data
 
 services:
     app:
@@ -48,27 +48,26 @@ services:
           - ./environment/local/app/php-fpm.conf:/usr/local/etc/php-fpm.d/zzz-overrides.conf:ro
           - ./environment/local/app/supervisord.conf:/etc/supervisor/custom-supervisord.conf:ro
           - .:/application
-          - sqlite_data:/application/database/sqlite
         ports:
             - ${DOCKER_APP_HOST_PORT:-63851}:80
         networks:
             - hops-web-dev
             - traefik-proxy-blumilk-local-environment
-        restart: unless-stopped
+        restart: no
 
     mailpit:
-      image: axllent/mailpit:v1.27.11@sha256:e22dce5b36f93c77082e204a3942fb6b283b7896e057458400a4c88344c3df68
+      image: axllent/mailpit:v1.29.1
       container_name: hops-web-mailpit-dev
       labels:
         - "traefik.enable=true"
-        - "traefik.blumilk.environment=true"
+        - "traefik.blumilk.local.environment=true"
         # HTTP
-        - "traefik.http.routers.hops-web-mailpit-http-router.rule=Host(`hops-web-mailpit.blumilk.localhost`)"
+        - "traefik.http.routers.hops-web-mailpit-http-router.rule=Host(`hops-web-mailpit.blumilk.local.env`)"
         - "traefik.http.routers.hops-web-mailpit-http-router.entrypoints=web"
         # HTTP to HTTPS redirect
         #      - "traefik.http.routers.hops-web-mailpit-http-router.middlewares=https-redirect@file"
         # HTTPS
-        - "traefik.http.routers.hops-web-mailpit-https-router.rule=Host(`hops-web-mailpit.blumilk.localhost`)"
+        - "traefik.http.routers.hops-web-mailpit-https-router.rule=Host(`hops-web-mailpit.blumilk.local.env`)"
         - "traefik.http.routers.hops-web-mailpit-https-router.entrypoints=websecure"
         - "traefik.http.routers.hops-web-mailpit-https-router.tls=true"
         # LOADBALANCER MAILPIT PORT
@@ -78,11 +77,14 @@ services:
         - traefik-proxy-blumilk-local-environment
       ports:
         - ${DOCKER_MAILPIT_DASHBOARD_HOST_PORT:-63854}:8025
-      restart: unless-stopped
-
+      restart: no
+      environment:
+        - MP_DATABASE=/data/mailpit.db
+      volumes:
+        - hops-web-mailpit-data:/data
 
     redis:
-        image: redis:7.2.5-alpine3.19@sha256:8f157725f8eee31e65a8d4765f1f986d76aedc1a0503345dfb63a2b1b5a441ee
+        image: redis:8.6.0-trixie
         container_name: hops-web-redis-dev
         ports:
             - ${DOCKER_REDIS_HOST_PORT:-63852}:6379
@@ -90,4 +92,4 @@ services:
             - hops-web-redis-data:/data
         networks:
             - hops-web-dev
-        restart: unless-stopped
+        restart: no
