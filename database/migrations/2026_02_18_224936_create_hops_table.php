@@ -41,7 +41,6 @@ return new class() extends Migration {
             $table->float("aroma_miscellaneous")->nullable();
             $table->json("aroma_descriptors")->nullable(); 
             $table->json("substitutes")->nullable();
-
             $table->timestamps();
         });
     }

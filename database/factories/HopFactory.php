@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use HopsWeb\Models\Hop;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
+/**
+ * @extends Factory<Hop>
+ */
 class HopFactory extends Factory
 {
     public function definition(): array
