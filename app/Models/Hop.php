@@ -14,30 +14,30 @@ use Illuminate\Support\Carbon;
  * @property string $slug
  * @property ?string $country
  * @property ?string $description
- * @property ?float $alpha_acid_min
- * @property ?float $alpha_acid_max
- * @property ?float $beta_acid_min
- * @property ?float $beta_acid_max
- * @property ?float $cohumulone_min
- * @property ?float $cohumulone_max
- * @property ?float $total_oil_min
- * @property ?float $total_oil_max
- * @property ?float $polyphenol_min
- * @property ?float $polyphenol_max
- * @property ?float $xanthohumol_min
- * @property ?float $xanthohumol_max
- * @property ?float $farnesene_min
- * @property ?float $farnesene_max
- * @property ?float $linalool_min
- * @property ?float $linalool_max
- * @property ?float $aroma_citrusy
- * @property ?float $aroma_fruity
- * @property ?float $aroma_floral
- * @property ?float $aroma_herbal
- * @property ?float $aroma_spicy
- * @property ?float $aroma_resinous
- * @property ?float $aroma_sugarlike
- * @property ?float $aroma_miscellaneous
+ * @property ?decimal $alpha_acid_min
+ * @property ?decimal $alpha_acid_max
+ * @property ?decimal $beta_acid_min
+ * @property ?decimal $beta_acid_max
+ * @property ?decimal $cohumulone_min
+ * @property ?decimal $cohumulone_max
+ * @property ?decimal $total_oil_min
+ * @property ?decimal $total_oil_max
+ * @property ?decimal $polyphenol_min
+ * @property ?decimal $polyphenol_max
+ * @property ?decimal $xanthohumol_min
+ * @property ?decimal $xanthohumol_max
+ * @property ?decimal $farnesene_min
+ * @property ?decimal $farnesene_max
+ * @property ?decimal $linalool_min
+ * @property ?decimal $linalool_max
+ * @property ?decimal $aroma_citrusy
+ * @property ?decimal $aroma_fruity
+ * @property ?decimal $aroma_floral
+ * @property ?decimal $aroma_herbal
+ * @property ?decimal $aroma_spicy
+ * @property ?decimal $aroma_resinous
+ * @property ?decimal $aroma_sugarlike
+ * @property ?decimal $aroma_miscellaneous
  * @property ?array $aroma_descriptors
  * @property ?array $substitutes
  * @property ?string $bitterness
