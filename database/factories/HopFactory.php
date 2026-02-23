@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use HopsWeb\Enums\Aromaticity;
+use HopsWeb\Enums\Bitterness;
 use HopsWeb\Models\Hop;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -54,6 +56,8 @@ class HopFactory extends Factory
             "aroma_miscellaneous" => $this->faker->randomFloat(1, 0, 5),
             "aroma_descriptors" => $this->faker->words(3),
             "substitutes" => $this->faker->words(3),
+            "bitterness" => $this->faker->randomElement(Bitterness::values()),
+            "aromaticity" => $this->faker->randomElement(Aromaticity::values()),
         ];
     }
 }

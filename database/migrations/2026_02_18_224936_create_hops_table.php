@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use HopsWeb\Enums\Aromaticity;
+use HopsWeb\Enums\Bitterness;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -41,6 +43,8 @@ return new class() extends Migration {
             $table->float("aroma_miscellaneous")->nullable();
             $table->json("aroma_descriptors")->nullable(); 
             $table->json("substitutes")->nullable();
+            $table->enum("bitterness", Bitterness::values())->nullable();
+            $table->enum("aromaticity", Aromaticity::values())->nullable();
             $table->timestamps();
         });
     }
