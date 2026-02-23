@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace HopsWeb\Models;
 
+use HopsWeb\Enums\Aromaticity;
+use HopsWeb\Enums\Bitterness;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -40,6 +42,8 @@ use Illuminate\Support\Carbon;
  * @property ?float $aroma_miscellaneous
  * @property ?array $aroma_descriptors
  * @property ?array $substitutes
+ * @property ?Bitterness $bitterness
+ * @property ?Aromaticity $aromaticity
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  */
@@ -78,9 +82,13 @@ class Hop extends Model
         "aroma_miscellaneous",
         "aroma_descriptors",
         "substitutes",
+        "bitterness",
+        "aromaticity",
     ];
     protected $casts = [
         "aroma_descriptors" => "array",
         "substitutes" => "array",
+        "bitterness" => Bitterness::class,
+        "aromaticity" => Aromaticity::class,
     ];
 }
