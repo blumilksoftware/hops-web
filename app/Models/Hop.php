@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace HopsWeb\Models;
 
+use HopsWeb\Casts\RangeOrNumberCast;
+use HopsWeb\ValueObjects\RangeOrNumber;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -14,30 +16,22 @@ use Illuminate\Support\Carbon;
  * @property string $slug
  * @property ?string $country
  * @property ?string $description
- * @property ?decimal $alpha_acid_min
- * @property ?decimal $alpha_acid_max
- * @property ?decimal $beta_acid_min
- * @property ?decimal $beta_acid_max
- * @property ?decimal $cohumulone_min
- * @property ?decimal $cohumulone_max
- * @property ?decimal $total_oil_min
- * @property ?decimal $total_oil_max
- * @property ?decimal $polyphenol_min
- * @property ?decimal $polyphenol_max
- * @property ?decimal $xanthohumol_min
- * @property ?decimal $xanthohumol_max
- * @property ?decimal $farnesene_min
- * @property ?decimal $farnesene_max
- * @property ?decimal $linalool_min
- * @property ?decimal $linalool_max
- * @property ?decimal $aroma_citrusy
- * @property ?decimal $aroma_fruity
- * @property ?decimal $aroma_floral
- * @property ?decimal $aroma_herbal
- * @property ?decimal $aroma_spicy
- * @property ?decimal $aroma_resinous
- * @property ?decimal $aroma_sugarlike
- * @property ?decimal $aroma_miscellaneous
+ * @property ?RangeOrNumber $alpha_acid
+ * @property ?RangeOrNumber $beta_acid
+ * @property ?RangeOrNumber $cohumulone
+ * @property ?RangeOrNumber $total_oil
+ * @property ?RangeOrNumber $polyphenol
+ * @property ?RangeOrNumber $xanthohumol
+ * @property ?RangeOrNumber $farnesene
+ * @property ?RangeOrNumber $linalool
+ * @property ?int $aroma_citrusy
+ * @property ?int $aroma_fruity
+ * @property ?int $aroma_floral
+ * @property ?int $aroma_herbal
+ * @property ?int $aroma_spicy
+ * @property ?int $aroma_resinous
+ * @property ?int $aroma_sugarlike
+ * @property ?int $aroma_miscellaneous
  * @property ?array $aroma_descriptors
  * @property ?array $substitutes
  * @property ?string $bitterness
@@ -54,22 +48,14 @@ class Hop extends Model
         "slug",
         "country",
         "description",
-        "alpha_acid_min",
-        "alpha_acid_max",
-        "beta_acid_min",
-        "beta_acid_max",
-        "cohumulone_min",
-        "cohumulone_max",
-        "total_oil_min",
-        "total_oil_max",
-        "polyphenol_min",
-        "polyphenol_max",
-        "xanthohumol_min",
-        "xanthohumol_max",
-        "farnesene_min",
-        "farnesene_max",
-        "linalool_min",
-        "linalool_max",
+        "alpha_acid",
+        "beta_acid",
+        "cohumulone",
+        "total_oil",
+        "polyphenol",
+        "xanthohumol",
+        "farnesene",
+        "linalool",
         "aroma_citrusy",
         "aroma_fruity",
         "aroma_floral",
@@ -84,6 +70,14 @@ class Hop extends Model
         "aromaticity",
     ];
     protected $casts = [
+        "alpha_acid" => RangeOrNumberCast::class,
+        "beta_acid" => RangeOrNumberCast::class,
+        "cohumulone" => RangeOrNumberCast::class,
+        "total_oil" => RangeOrNumberCast::class,
+        "polyphenol" => RangeOrNumberCast::class,
+        "xanthohumol" => RangeOrNumberCast::class,
+        "farnesene" => RangeOrNumberCast::class,
+        "linalool" => RangeOrNumberCast::class,
         "aroma_descriptors" => "array",
         "substitutes" => "array",
     ];

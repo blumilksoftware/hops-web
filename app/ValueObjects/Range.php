@@ -6,52 +6,39 @@ namespace HopsWeb\ValueObjects;
 
 use InvalidArgumentException;
 
-final class Range
+class Range
 {
     public function __construct(
         public readonly ?float $min,
         public readonly ?float $max,
+        public readonly ?float $exact,
     ) {
         if ($min !== null && $max !== null && $min > $max) {
-            throw new InvalidArgumentException("min cannot be greater than max");
+            throw new InvalidArgumentException("Min value must be less than or equal to max value");
+        }
+
+        if ($exact !== null && $exact < 0) {
+            throw new InvalidArgumentException("Exact value must be greater than or equal to 0");
         }
     }
 
-    public static function exact(float $value): self
+    public static function fromNumber(float $value): self
     {
-        return new self(min: $value, max: $value);
+        return new self(null, null, $value);
     }
 
-    public static function from(float $min, float $max): self
+    public static function fromRange(float $min, float $max): self
     {
-        return new self($min, $max);
+        return new self($min, $max, null);
     }
 
-    public static function atLeast(float $min): self
+    public function isRange(): bool
     {
-        return new self($min, null);
+        return $this->exact === null;
     }
 
-    public static function atMost(float $max): self
+    public function isNumber(): bool
     {
-        return new self(null, $max);
-    }
-
-    public function isExact(): bool
-    {
-        return $this->min === $this->max && $this->min !== null;
-    }
-
-    public function contains(float $value): bool
-    {
-        if ($this->min !== null && $value < $this->min) {
-            return false;
-        }
-
-        if ($this->max !== null && $value > $this->max) {
-            return false;
-        }
-
-        return true;
+        return $this->exact !== null;
     }
 }

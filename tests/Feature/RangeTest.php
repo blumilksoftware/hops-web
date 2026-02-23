@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use HopsWeb\ValueObjects\Range;
+use InvalidArgumentException;
 use Tests\TestCase;
 
 class RangeTest extends TestCase
 {
     public function testRangeCanBeCreatedWithMinAndMax(): void
     {
-        $range = Range::from(1, 10);
+        $range = Range::fromRange(1, 10);
 
         $this->assertEquals(1, $range->min);
         $this->assertEquals(10, $range->max);
@@ -19,46 +20,22 @@ class RangeTest extends TestCase
 
     public function testRangeCanBeCreatedWithExactValue(): void
     {
-        $range = Range::exact(5);
+        $range = Range::fromNumber(1);
 
-        $this->assertEquals(5, $range->min);
-        $this->assertEquals(5, $range->max);
-    }
-
-    public function testRangeCanBeCreatedWithMinOnly(): void
-    {
-        $range = Range::atLeast(5);
-
-        $this->assertEquals(5, $range->min);
-        $this->assertNull($range->max);
-    }
-
-    public function testRangeCanBeCreatedWithMaxOnly(): void
-    {
-        $range = Range::atMost(5);
-
-        $this->assertNull($range->min);
-        $this->assertEquals(5, $range->max);
+        $this->assertEquals(1, $range->exact);
     }
 
     public function testRangeThrowsExceptionWhenMinIsGreaterThanMax(): void
     {
-        $this->expectException("InvalidArgumentException");
+        $this->expectException(InvalidArgumentException::class);
 
-        Range::from(10, 1);
+        Range::fromRange(10, 1);
     }
 
-    public function testRangeContainsValue(): void
+    public function testRangeThrowsExceptionWhenExactValueIsNegative(): void
     {
-        $range = Range::from(1, 10);
+        $this->expectException(InvalidArgumentException::class);
 
-        $this->assertTrue($range->contains(5));
-    }
-
-    public function testRangeDoesNotContainValue(): void
-    {
-        $range = Range::from(1, 10);
-
-        $this->assertFalse($range->contains(11));
+        Range::fromNumber(-1);
     }
 }
