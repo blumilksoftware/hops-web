@@ -24,12 +24,21 @@ class HopFactory extends Factory
         $xanthohumolMin = $this->faker->randomFloat(1, 0.1, 1.0);
         $farneseneMin = $this->faker->randomFloat(1, 0.1, 10);
         $linaloolMin = $this->faker->randomFloat(1, 0.1, 1.5);
+        $yieldMin = $this->faker->numberBetween(800, 2000);
+
+        $substituteSlugs = fn(): array => $this->faker->randomElements(
+            ["cascade", "centennial", "chinook", "citra", "mosaic", "simcoe", "amarillo"],
+            $this->faker->numberBetween(0, 3),
+        );
 
         return [
             "name" => $this->faker->unique()->word() . " Hop",
             "slug" => $this->faker->unique()->slug(),
-            "country" => $this->faker->country(),
+            "alt_name" => $this->faker->optional()->word(),
+            "country" => $this->faker->countryCode(),
             "description" => $this->faker->paragraph(),
+            "descriptors" => $this->faker->randomElements(["fruity", "citrusy", "herbal", "spicy", "floral", "resinous"], 2),
+            "lineage" => $this->faker->optional()->randomElements(["brewers-gold", "fuggle", "cascade"], 2),
             "alpha_acid_min" => $alphaMin,
             "alpha_acid_max" => $alphaMin + $this->faker->randomFloat(1, 1, 5),
             "beta_acid_min" => $betaMin,
@@ -46,6 +55,7 @@ class HopFactory extends Factory
             "farnesene_max" => $farneseneMin + $this->faker->randomFloat(1, 1, 5),
             "linalool_min" => $linaloolMin,
             "linalool_max" => $linaloolMin + $this->faker->randomFloat(1, 0.1, 0.5),
+            "thiols" => $this->faker->randomElement(["low", "medium", "high"]),
             "aroma_citrusy" => $this->faker->numberBetween(0, 5),
             "aroma_fruity" => $this->faker->numberBetween(0, 5),
             "aroma_floral" => $this->faker->numberBetween(0, 5),
@@ -53,11 +63,21 @@ class HopFactory extends Factory
             "aroma_spicy" => $this->faker->numberBetween(0, 5),
             "aroma_resinous" => $this->faker->numberBetween(0, 5),
             "aroma_sugarlike" => $this->faker->numberBetween(0, 5),
-            "aroma_miscellaneous" => $this->faker->numberBetween(0, 5),
+            "aroma_misc" => $this->faker->numberBetween(0, 5),
             "aroma_descriptors" => $this->faker->words(3),
-            "substitutes" => $this->faker->words(3),
-            "bitterness" => $this->faker->randomElement(Bitterness::values()),
-            "aromaticity" => $this->faker->randomElement(Aromaticity::values()),
+            "substitutes" => [
+                "brewhouse" => $substituteSlugs(),
+                "dryhopping" => $substituteSlugs(),
+            ],
+            "yield_min" => $yieldMin,
+            "yield_max" => $yieldMin + $this->faker->numberBetween(100, 500),
+            "maturity" => $this->faker->optional()->randomElement(["early", "mid early", "mid late", "late", "very late"]),
+            "wilt_disease" => $this->faker->optional()->randomElement(["resistant", "tolerant", "susceptible"]),
+            "downy_mildew" => $this->faker->optional()->randomElement(["resistant", "tolerant", "susceptible"]),
+            "powdery_mildew" => $this->faker->optional()->randomElement(["resistant", "tolerant", "susceptible"]),
+            "aphid" => $this->faker->optional()->randomElement(["resistant", "tolerant", "susceptible"]),
+            "bitterness" => $this->faker->optional()->randomElement(Bitterness::values()),
+            "aromaticity" => $this->faker->optional()->randomElement(Aromaticity::values()),
         ];
     }
 }

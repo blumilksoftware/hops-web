@@ -37,8 +37,9 @@ class ImportHopVarietyJobTest extends TestCase
         $this->assertEquals(3, $hop->aroma_fruity);
         $this->assertEquals(1, $hop->aroma_floral);
         $this->assertEquals(0, $hop->aroma_spicy);
+        $this->assertEquals(0, $hop->aroma_misc);
         $this->assertEquals(["lime", "black currant"], $hop->aroma_descriptors);
-        $this->assertEquals(["centennial", "lemondrop"], $hop->substitutes);
+        $this->assertEquals(["brewhouse" => ["centennial", "lemondrop"], "dryhopping" => ["centennial", "lemondrop"]], $hop->substitutes);
         $this->assertNotNull($hop->alpha_acid);
         $this->assertEquals(4.5, $hop->alpha_acid->min);
         $this->assertEquals(7.0, $hop->alpha_acid->max);
