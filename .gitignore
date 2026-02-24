@@ -22,4 +22,3 @@ supervisord.pid
 .php-cs-fixer.cache
 phpunit.xml
 /database/sqlite
-/storage/framework/testing
