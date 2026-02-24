@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use HopsWeb\ValueObjects\Range;
+use HopsWeb\ValueObjects\RangeOrNumber;
 use InvalidArgumentException;
 use Tests\TestCase;
 
-class RangeTest extends TestCase
+class RangeOrNumberTest extends TestCase
 {
     public function testRangeCanBeCreatedWithMinAndMax(): void
     {
-        $range = Range::fromRange(1, 10);
+        $range = RangeOrNumber::fromRange(1, 10);
 
         $this->assertEquals(1, $range->min);
         $this->assertEquals(10, $range->max);
@@ -20,7 +20,7 @@ class RangeTest extends TestCase
 
     public function testRangeCanBeCreatedWithExactValue(): void
     {
-        $range = Range::fromNumber(1);
+        $range = RangeOrNumber::fromNumber(1);
 
         $this->assertEquals(1, $range->exact);
     }
@@ -29,13 +29,13 @@ class RangeTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        Range::fromRange(10, 1);
+        RangeOrNumber::fromRange(10, 1);
     }
 
     public function testRangeThrowsExceptionWhenExactValueIsNegative(): void
     {
         $this->expectException(InvalidArgumentException::class);
 
-        Range::fromNumber(-1);
+        RangeOrNumber::fromNumber(-1);
     }
 }
