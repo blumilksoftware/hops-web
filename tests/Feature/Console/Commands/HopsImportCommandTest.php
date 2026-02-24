@@ -53,4 +53,17 @@ class HopsImportCommandTest extends TestCase
         $this->artisan("hops:import")
             ->assertExitCode(0);
     }
+
+    public function testItAcceptsCustomFolderArgument(): void
+    {
+        Storage::fake("local");
+        Bus::fake();
+
+        Storage::disk("local")->put("custom_folder/galaxy.json5", "{}");
+
+        $this->artisan("hops:import", ["folder" => "custom_folder"])
+            ->assertExitCode(0);
+
+        Bus::assertDispatched(ImportHopVarietyJob::class, fn($job) => $job->filePath === "custom_folder/galaxy.json5");
+    }
 }

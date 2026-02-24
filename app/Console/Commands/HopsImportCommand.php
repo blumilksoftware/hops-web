@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\Storage;
 
 class HopsImportCommand extends Command
 {
-    protected $signature = "hops:import";
+    protected $signature = "hops:import {folder=hops_data : Directory inside local storage to scan for JSON/JSON5 files}";
     protected $description = "Import hop varieties from JSON/JSON5 files in storage";
 
     public function handle(): void
     {
-        $files = collect(Storage::disk("local")->files("hops_data"))
+        $folder = $this->argument("folder");
+
+        $files = collect(Storage::disk("local")->files($folder))
             ->filter(fn(string $file): bool => in_array(
                 pathinfo($file, PATHINFO_EXTENSION),
                 ["json", "json5"],
@@ -23,7 +25,7 @@ class HopsImportCommand extends Command
             ));
 
         if ($files->isEmpty()) {
-            $this->info("No files found in hops_data directory.");
+            $this->info("No files found in {$folder} directory.");
 
             return;
         }
