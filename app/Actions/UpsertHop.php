@@ -55,7 +55,10 @@ class UpsertHop
             "aroma_descriptors" => ["nullable", "array"],
             "aroma_descriptors.*" => ["string"],
             "substitutes" => ["nullable", "array"],
-            "substitutes.*" => ["string"],
+            "substitutes.brewhouse" => ["nullable", "array"],
+            "substitutes.brewhouse.*" => ["string"],
+            "substitutes.dryhopping" => ["nullable", "array"],
+            "substitutes.dryhopping.*" => ["string"],
         ]);
 
         if ($validator->fails()) {
@@ -80,7 +83,10 @@ class UpsertHop
             "aroma_sugarlike" => $validated["aroma_sugarlike"],
             "aroma_miscellaneous" => $validated["aroma_miscellaneous"],
             "aroma_descriptors" => $validated["aroma_descriptors"] ?? [],
-            "substitutes" => $validated["substitutes"] ?? [],
+            "substitutes" => array_values(array_unique(array_merge(
+                $validated["substitutes"]["brewhouse"] ?? [],
+                $validated["substitutes"]["dryhopping"] ?? [],
+            ))),
         ];
 
         $rangeFields = [

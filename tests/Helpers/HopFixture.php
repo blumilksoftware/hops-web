@@ -1,3 +1,14 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Helpers;
+
+class HopFixture
+{
+    public static function cascade(): string
+    {
+        return <<<'JSON5'
 {
   id: "cascade",
   name: "Cascade",
@@ -35,4 +46,42 @@
       dryhopping: ["centennial", "lemondrop"]
     }
   }
+}
+JSON5;
+    }
+
+    public static function minimal(): string
+    {
+        return <<<'JSON5'
+{
+  name: "Test Hop",
+  country: "DE",
+  aroma: {
+    citrusy: 1,
+    fruity: 0,
+    floral: 0,
+    herbal: 0,
+    spicy: 0,
+    resinous: 0,
+    sugarlike: 0,
+    misc: 0
+  },
+  aromaDescription: [],
+  ingredients: {
+    alphas: { min: 5.0, max: 8.0 },
+    betas: null,
+    cohumulones: null,
+    polyphenols: null,
+    xanthohumols: null,
+    oils: null,
+    farnesenes: null,
+    linalool: null,
+    alternatives: {
+      brewhouse: [],
+      dryhopping: []
+    }
+  }
+}
+JSON5;
+    }
 }

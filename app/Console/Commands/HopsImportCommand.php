@@ -28,13 +28,13 @@ class HopsImportCommand extends Command
             return;
         }
 
-        $this->info("Found {$files->count()} file(s) to import.");
+        $this->info("Found {$files->count()} hop variety file(s) to import.");
 
         foreach ($files as $file) {
             $this->info("Dispatching import for: {$file}");
             ImportHopVarietyJob::dispatch($file);
         }
 
-        $this->info("All import jobs have been dispatched.");
+        $this->info("All import jobs have been dispatched to queue, run `php artisan queue:work` to process them.");
     }
 }

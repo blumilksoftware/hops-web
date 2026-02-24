@@ -9,6 +9,8 @@ use HopsWeb\Models\Hop;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Tests\Helpers\HopFixture;
 use Tests\TestCase;
 
 class ImportHopVarietyJobTest extends TestCase
@@ -18,7 +20,7 @@ class ImportHopVarietyJobTest extends TestCase
     public function testItImportsHopFromJson5File(): void
     {
         Storage::fake("local");
-        Storage::disk("local")->put("hops_data/cascade.json5", $this->fixture("cascade.json5"));
+        Storage::disk("local")->put("hops_data/cascade.json5", HopFixture::cascade());
 
         ImportHopVarietyJob::dispatchSync("hops_data/cascade.json5");
 
@@ -46,7 +48,7 @@ class ImportHopVarietyJobTest extends TestCase
     public function testItUpdatesExistingHopOnReimport(): void
     {
         Storage::fake("local");
-        Storage::disk("local")->put("hops_data/cascade.json5", $this->fixture("cascade.json5"));
+        Storage::disk("local")->put("hops_data/cascade.json5", HopFixture::cascade());
 
         ImportHopVarietyJob::dispatchSync("hops_data/cascade.json5");
         ImportHopVarietyJob::dispatchSync("hops_data/cascade.json5");
@@ -59,7 +61,7 @@ class ImportHopVarietyJobTest extends TestCase
         Storage::fake("local");
         Log::shouldReceive("warning")
             ->once()
-            ->withArgs(fn(string $msg) => str_contains($msg, "File not found"));
+            ->withArgs(fn(string $msg) => Str::contains($msg, "File not found"));
 
         ImportHopVarietyJob::dispatchSync("hops_data/nonexistent.json5");
 
@@ -73,7 +75,7 @@ class ImportHopVarietyJobTest extends TestCase
 
         Log::shouldReceive("warning")
             ->once()
-            ->withArgs(fn(string $msg) => str_contains($msg, "Failed to parse"));
+            ->withArgs(fn(string $msg) => Str::contains($msg, "Failed to parse"));
 
         ImportHopVarietyJob::dispatchSync("hops_data/bad.json5");
 
@@ -87,7 +89,7 @@ class ImportHopVarietyJobTest extends TestCase
 
         Log::shouldReceive("warning")
             ->once()
-            ->withArgs(fn(string $msg) => str_contains($msg, "Validation failed"));
+            ->withArgs(fn(string $msg) => Str::contains($msg, "Validation failed"));
 
         ImportHopVarietyJob::dispatchSync("hops_data/invalid.json5");
 
@@ -97,7 +99,7 @@ class ImportHopVarietyJobTest extends TestCase
     public function testItHandlesNullIngredientRanges(): void
     {
         Storage::fake("local");
-        Storage::disk("local")->put("hops_data/minimal.json5", $this->fixture("minimal.json5"));
+        Storage::disk("local")->put("hops_data/minimal.json5", HopFixture::minimal());
 
         ImportHopVarietyJob::dispatchSync("hops_data/minimal.json5");
 
@@ -106,10 +108,5 @@ class ImportHopVarietyJobTest extends TestCase
         $this->assertNotNull($hop->alpha_acid);
         $this->assertNull($hop->beta_acid);
         $this->assertNull($hop->polyphenol);
-    }
-
-    private function fixture(string $filename): string
-    {
-        return file_get_contents(__DIR__ . "/../../Fixtures/hops/{$filename}");
     }
 }

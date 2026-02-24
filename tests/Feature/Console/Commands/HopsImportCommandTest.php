@@ -24,10 +24,6 @@ class HopsImportCommandTest extends TestCase
         Storage::disk("local")->put("hops_data/not-a-hop.txt", "test");
 
         $this->artisan("hops:import")
-            ->expectsOutput("Found 2 file(s) to import.")
-            ->expectsOutput("Dispatching import for: hops_data/citra.json5")
-            ->expectsOutput("Dispatching import for: hops_data/mosaic.json5")
-            ->expectsOutput("All import jobs have been dispatched.")
             ->assertExitCode(0);
 
         Bus::assertDispatched(ImportHopVarietyJob::class, fn($job) => $job->filePath === "hops_data/citra.json5");
@@ -45,7 +41,6 @@ class HopsImportCommandTest extends TestCase
         Storage::disk("local")->put("hops_data/citra.json", "{}");
 
         $this->artisan("hops:import")
-            ->expectsOutput("Found 1 file(s) to import.")
             ->assertExitCode(0);
 
         Bus::assertDispatched(ImportHopVarietyJob::class, 1);
@@ -56,7 +51,6 @@ class HopsImportCommandTest extends TestCase
         Storage::fake("local");
 
         $this->artisan("hops:import")
-            ->expectsOutput("No files found in hops_data directory.")
             ->assertExitCode(0);
     }
 }

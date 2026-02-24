@@ -44,9 +44,10 @@ class MapHopData
     private function extractSubstitutes(array $data): array
     {
         $alternatives = $data["ingredients"]["alternatives"] ?? [];
-        $brewhouse = $alternatives["brewhouse"] ?? [];
-        $dryhopping = $alternatives["dryhopping"] ?? [];
 
-        return array_values(array_unique(array_merge($brewhouse, $dryhopping)));
+        return [
+            "brewhouse" => $alternatives["brewhouse"] ?? [],
+            "dryhopping" => $alternatives["dryhopping"] ?? [],
+        ];
     }
 }
