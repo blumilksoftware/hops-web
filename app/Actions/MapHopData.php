@@ -8,10 +8,16 @@ class MapHopData
 {
     public function execute(array $data): array
     {
+        $agronomic = $data["agronomic"] ?? [];
+        $yield = $agronomic["yield"] ?? null;
+
         return [
             "name" => $data["name"] ?? null,
+            "alt_name" => $data["altName"] ?? null,
             "country" => $data["country"] ?? null,
             "description" => $data["origin"] ?? null,
+            "descriptors" => $data["descriptors"] ?? [],
+            "lineage" => $data["lineage"] ?? [],
             "alpha_acid_min" => $data["ingredients"]["alphas"]["min"] ?? null,
             "alpha_acid_max" => $data["ingredients"]["alphas"]["max"] ?? null,
             "beta_acid_min" => $data["ingredients"]["betas"]["min"] ?? null,
@@ -28,6 +34,7 @@ class MapHopData
             "farnesene_max" => $data["ingredients"]["farnesenes"]["max"] ?? null,
             "linalool_min" => $data["ingredients"]["linalool"]["min"] ?? null,
             "linalool_max" => $data["ingredients"]["linalool"]["max"] ?? null,
+            "thiols" => $data["ingredients"]["thiols"] ?? null,
             "aroma_citrusy" => $data["aroma"]["citrusy"] ?? null,
             "aroma_fruity" => $data["aroma"]["fruity"] ?? null,
             "aroma_floral" => $data["aroma"]["floral"] ?? null,
@@ -35,8 +42,15 @@ class MapHopData
             "aroma_spicy" => $data["aroma"]["spicy"] ?? null,
             "aroma_resinous" => $data["aroma"]["resinous"] ?? null,
             "aroma_sugarlike" => $data["aroma"]["sugarlike"] ?? null,
-            "aroma_miscellaneous" => $data["aroma"]["misc"] ?? null,
+            "aroma_misc" => $data["aroma"]["misc"] ?? null,
             "aroma_descriptors" => $data["aromaDescription"] ?? [],
+            "yield_min" => is_array($yield) ? ($yield["min"] ?? null) : null,
+            "yield_max" => is_array($yield) ? ($yield["max"] ?? null) : null,
+            "maturity" => $agronomic["maturity"] ?? null,
+            "wilt_disease" => $agronomic["wiltDisease"] ?? null,
+            "downy_mildew" => $agronomic["downyMildew"] ?? null,
+            "powdery_mildew" => $agronomic["powderyMildew"] ?? null,
+            "aphid" => $agronomic["aphid"] ?? null,
             "substitutes" => $this->extractSubstitutes($data),
         ];
     }
