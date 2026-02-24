@@ -15,6 +15,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $email
  * @property string $password
  * @property Carbon $email_verified_at
+ * @property bool $is_admin
+ * @property bool $is_team_member
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -28,6 +30,8 @@ class User extends Authenticatable
         "name",
         "email",
         "password",
+        "is_admin",
+        "is_team_member",
     ];
     protected $hidden = [
         "password",
@@ -39,6 +43,8 @@ class User extends Authenticatable
         return [
             "email_verified_at" => "datetime",
             "password" => "hashed",
+            "is_admin" => "boolean",
+            "is_team_member" => "boolean",
         ];
     }
 }
