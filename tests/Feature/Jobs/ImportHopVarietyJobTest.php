@@ -18,7 +18,7 @@ class ImportHopVarietyJobTest extends TestCase
     public function testItImportsHopFromJson5File(): void
     {
         Storage::fake("local");
-        Storage::disk("local")->put("hops_data/cascade.json5", $this->sampleJson5());
+        Storage::disk("local")->put("hops_data/cascade.json5", $this->fixture("cascade.json5"));
 
         ImportHopVarietyJob::dispatchSync("hops_data/cascade.json5");
 
@@ -46,7 +46,7 @@ class ImportHopVarietyJobTest extends TestCase
     public function testItUpdatesExistingHopOnReimport(): void
     {
         Storage::fake("local");
-        Storage::disk("local")->put("hops_data/cascade.json5", $this->sampleJson5());
+        Storage::disk("local")->put("hops_data/cascade.json5", $this->fixture("cascade.json5"));
 
         ImportHopVarietyJob::dispatchSync("hops_data/cascade.json5");
         ImportHopVarietyJob::dispatchSync("hops_data/cascade.json5");
@@ -83,7 +83,6 @@ class ImportHopVarietyJobTest extends TestCase
     public function testItLogsWarningForValidationFailure(): void
     {
         Storage::fake("local");
-        // Missing required 'name' field
         Storage::disk("local")->put("hops_data/invalid.json5", '{ country: "US" }');
 
         Log::shouldReceive("warning")
@@ -98,41 +97,9 @@ class ImportHopVarietyJobTest extends TestCase
     public function testItHandlesNullIngredientRanges(): void
     {
         Storage::fake("local");
-        $json5 = <<<'JSON5'
-        {
-          name: "Test Hop",
-          country: "DE",
-          aroma: {
-            citrusy: 1,
-            fruity: 0,
-            floral: 0,
-            herbal: 0,
-            spicy: 0,
-            resinous: 0,
-            sugarlike: 0,
-            misc: 0
-          },
-          aromaDescription: [],
-          ingredients: {
-            alphas: { min: 5.0, max: 8.0 },
-            betas: null,
-            cohumulones: null,
-            polyphenols: null,
-            xanthohumols: null,
-            oils: null,
-            farnesenes: null,
-            linalool: null,
-            alternatives: {
-              brewhouse: [],
-              dryhopping: []
-            }
-          }
-        }
-        JSON5;
+        Storage::disk("local")->put("hops_data/minimal.json5", $this->fixture("minimal.json5"));
 
-        Storage::disk("local")->put("hops_data/test.json5", $json5);
-
-        ImportHopVarietyJob::dispatchSync("hops_data/test.json5");
+        ImportHopVarietyJob::dispatchSync("hops_data/minimal.json5");
 
         $hop = Hop::where("name", "Test Hop")->first();
         $this->assertNotNull($hop);
@@ -141,47 +108,8 @@ class ImportHopVarietyJobTest extends TestCase
         $this->assertNull($hop->polyphenol);
     }
 
-    private function sampleJson5(): string
+    private function fixture(string $filename): string
     {
-        return <<<'JSON5'
-        {
-          id: "cascade",
-          name: "Cascade",
-          altName: null,
-          country: "US",
-          descriptors: ["citrusy", "fruity", "herbal"],
-          origin: "A very popular aroma hop.",
-          aroma: {
-            citrusy: 3,
-            fruity: 3,
-            floral: 1,
-            herbal: 3,
-            spicy: 0,
-            resinous: 1,
-            sugarlike: 0,
-            misc: 0
-          },
-          aromaDescription: ["lime", "black currant"],
-          agronomic: {
-            yield: { min: 1600, max: 2200 },
-            maturity: "early to mid early"
-          },
-          ingredients: {
-            alphas: { min: 4.5, max: 7.0 },
-            betas: { min: 4.5, max: 7.0 },
-            cohumulones: { min: 33, max: 40 },
-            polyphenols: null,
-            xanthohumols: { min: 0.1, max: 0.4 },
-            oils: { min: 0.8, max: 1.5 },
-            farnesenes: { min: 4.0, max: 8.0 },
-            linalool: { min: 0.4, max: 0.6 },
-            thiols: "high",
-            alternatives: {
-              brewhouse: ["centennial", "lemondrop"],
-              dryhopping: ["centennial", "lemondrop"]
-            }
-          }
-        }
-        JSON5;
+        return file_get_contents(__DIR__ . "/../../Fixtures/hops/{$filename}");
     }
 }
