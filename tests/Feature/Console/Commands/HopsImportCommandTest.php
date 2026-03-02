@@ -26,11 +26,9 @@ class HopsImportCommandTest extends TestCase
         $this->artisan("hops:import")
             ->assertExitCode(0);
 
-        Bus::assertDispatched(ImportHopVarietyJob::class, fn($job) => $job->filePath === "hops_data/citra.json5");
-
-        Bus::assertDispatched(ImportHopVarietyJob::class, fn($job) => $job->filePath === "hops_data/mosaic.json5");
-
-        Bus::assertNotDispatched(ImportHopVarietyJob::class, fn($job) => $job->filePath === "hops_data/not-a-hop.txt");
+        Bus::assertDispatched(ImportHopVarietyJob::class, fn(ImportHopVarietyJob $job): bool => $job->filePath === "hops_data/citra.json5");
+        Bus::assertDispatched(ImportHopVarietyJob::class, fn(ImportHopVarietyJob $job): bool => $job->filePath === "hops_data/mosaic.json5");
+        Bus::assertNotDispatched(ImportHopVarietyJob::class, fn(ImportHopVarietyJob $job): bool => $job->filePath === "hops_data/not-a-hop.txt");
     }
 
     public function testItAlsoDispatchesForPlainJsonFiles(): void
@@ -64,6 +62,6 @@ class HopsImportCommandTest extends TestCase
         $this->artisan("hops:import", ["folder" => "custom_folder"])
             ->assertExitCode(0);
 
-        Bus::assertDispatched(ImportHopVarietyJob::class, fn($job) => $job->filePath === "custom_folder/galaxy.json5");
+        Bus::assertDispatched(ImportHopVarietyJob::class, fn(ImportHopVarietyJob $job): bool => $job->filePath === "custom_folder/galaxy.json5");
     }
 }

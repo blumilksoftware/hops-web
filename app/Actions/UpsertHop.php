@@ -5,26 +5,50 @@ declare(strict_types=1);
 namespace HopsWeb\Actions;
 
 use HopsWeb\Models\Hop;
-use HopsWeb\ValueObjects\RangeOrNumber;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class UpsertHop
 {
+    private const array RANGE_FIELDS = [
+        "alpha_acid",
+        "beta_acid",
+        "cohumulone",
+        "total_oil",
+        "polyphenol",
+        "xanthohumol",
+        "farnesene",
+        "linalool",
+    ];
+
     public function execute(array $data): Hop
     {
+        $rangeValues = $this->extractRangeValues($data);
         $validated = $this->validate($data);
 
         return Hop::updateOrCreate(
             ["name" => $validated["name"]],
-            $this->buildAttributes($validated),
+            $this->buildAttributes($validated, $rangeValues),
         );
+    }
+
+    private function extractRangeValues(array $data): array
+    {
+        $rangeValues = [];
+
+        foreach (self::RANGE_FIELDS as $field) {
+            $rangeValues[$field] = $data[$field] ?? null;
+        }
+
+        return $rangeValues;
     }
 
     private function validate(array $data): array
     {
-        $validator = Validator::make($data, [
+        $filteredData = array_diff_key($data, array_flip(self::RANGE_FIELDS));
+
+        $validator = Validator::make($filteredData, [
             "name" => ["required", "string", "max:255"],
             "alt_name" => ["nullable", "string", "max:255"],
             "country" => ["nullable", "string", "max:255"],
@@ -33,22 +57,6 @@ class UpsertHop
             "descriptors.*" => ["string"],
             "lineage" => ["nullable", "array"],
             "lineage.*" => ["string"],
-            "alpha_acid_min" => ["nullable", "numeric", "min:0"],
-            "alpha_acid_max" => ["nullable", "numeric", "min:0"],
-            "beta_acid_min" => ["nullable", "numeric", "min:0"],
-            "beta_acid_max" => ["nullable", "numeric", "min:0"],
-            "cohumulone_min" => ["nullable", "numeric", "min:0"],
-            "cohumulone_max" => ["nullable", "numeric", "min:0"],
-            "total_oil_min" => ["nullable", "numeric", "min:0"],
-            "total_oil_max" => ["nullable", "numeric", "min:0"],
-            "polyphenol_min" => ["nullable", "numeric", "min:0"],
-            "polyphenol_max" => ["nullable", "numeric", "min:0"],
-            "xanthohumol_min" => ["nullable", "numeric", "min:0"],
-            "xanthohumol_max" => ["nullable", "numeric", "min:0"],
-            "farnesene_min" => ["nullable", "numeric", "min:0"],
-            "farnesene_max" => ["nullable", "numeric", "min:0"],
-            "linalool_min" => ["nullable", "numeric", "min:0"],
-            "linalool_max" => ["nullable", "numeric", "min:0"],
             "thiols" => ["nullable", "string", "in:low,medium,high"],
             "aroma_citrusy" => ["nullable", "integer", "between:0,5"],
             "aroma_fruity" => ["nullable", "integer", "between:0,5"],
@@ -81,15 +89,23 @@ class UpsertHop
         return $validator->validated();
     }
 
-    private function buildAttributes(array $validated): array
+    private function buildAttributes(array $validated, array $rangeValues): array
     {
-        $attributes = [
+        return [
             "slug" => Str::slug($validated["name"]) . "-hop",
             "alt_name" => $validated["alt_name"] ?? null,
             "country" => $validated["country"] ?? null,
             "description" => $validated["description"] ?? null,
             "descriptors" => $validated["descriptors"] ?? [],
             "lineage" => $validated["lineage"] ?? [],
+            "alpha_acid" => $rangeValues["alpha_acid"],
+            "beta_acid" => $rangeValues["beta_acid"],
+            "cohumulone" => $rangeValues["cohumulone"],
+            "total_oil" => $rangeValues["total_oil"],
+            "polyphenol" => $rangeValues["polyphenol"],
+            "xanthohumol" => $rangeValues["xanthohumol"],
+            "farnesene" => $rangeValues["farnesene"],
+            "linalool" => $rangeValues["linalool"],
             "thiols" => $validated["thiols"] ?? null,
             "aroma_citrusy" => $validated["aroma_citrusy"] ?? null,
             "aroma_fruity" => $validated["aroma_fruity"] ?? null,
@@ -112,27 +128,5 @@ class UpsertHop
             "powdery_mildew" => $validated["powdery_mildew"] ?? null,
             "aphid" => $validated["aphid"] ?? null,
         ];
-
-        $rangeFields = [
-            "alpha_acid",
-            "beta_acid",
-            "cohumulone",
-            "total_oil",
-            "polyphenol",
-            "xanthohumol",
-            "farnesene",
-            "linalool",
-        ];
-
-        foreach ($rangeFields as $field) {
-            $min = $validated["{$field}_min"] ?? null;
-            $max = $validated["{$field}_max"] ?? null;
-
-            $attributes[$field] = ($min !== null && $max !== null)
-                ? RangeOrNumber::fromRange((float)$min, (float)$max)
-                : null;
-        }
-
-        return $attributes;
     }
 }

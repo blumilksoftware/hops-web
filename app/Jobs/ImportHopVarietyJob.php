@@ -9,11 +9,11 @@ use HopsWeb\Actions\UpsertHop;
 use HopsWeb\Helpers\Json5Parser;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class ImportHopVarietyJob implements ShouldQueue
@@ -27,9 +27,9 @@ class ImportHopVarietyJob implements ShouldQueue
         public readonly string $filePath,
     ) {}
 
-    public function handle(Json5Parser $parser, MapHopData $mapper, UpsertHop $upsert): void
+    public function handle(Json5Parser $parser, MapHopData $mapper, UpsertHop $upsert, FilesystemManager $filesystem): void
     {
-        $content = Storage::disk("local")->get($this->filePath);
+        $content = $filesystem->get($this->filePath);
 
         if ($content === null) {
             Log::warning("ImportHopVarietyJob: File not found: {$this->filePath}");

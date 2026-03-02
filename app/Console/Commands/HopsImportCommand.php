@@ -6,18 +6,18 @@ namespace HopsWeb\Console\Commands;
 
 use HopsWeb\Jobs\ImportHopVarietyJob;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Filesystem\FilesystemManager;
 
 class HopsImportCommand extends Command
 {
-    protected $signature = "hops:import {folder=hops_data : Directory inside local storage to scan for JSON/JSON5 files}";
+    protected $signature = "hops:import {folder=hops_data : Directory inside storage to scan for JSON/JSON5 files}";
     protected $description = "Import hop varieties from JSON/JSON5 files in storage";
 
-    public function handle(): void
+    public function handle(FilesystemManager $filesystem): void
     {
         $folder = $this->argument("folder");
 
-        $files = collect(Storage::disk("local")->files($folder))
+        $files = collect($filesystem->files($folder))
             ->filter(fn(string $file): bool => in_array(
                 pathinfo($file, PATHINFO_EXTENSION),
                 ["json", "json5"],

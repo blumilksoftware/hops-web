@@ -62,7 +62,7 @@ class ImportHopVarietyJobTest extends TestCase
         Storage::fake("local");
         Log::shouldReceive("warning")
             ->once()
-            ->withArgs(fn(string $msg) => Str::contains($msg, "File not found"));
+            ->withArgs(fn(string $msg): bool => Str::contains($msg, "File not found"));
 
         ImportHopVarietyJob::dispatchSync("hops_data/nonexistent.json5");
 
@@ -76,7 +76,7 @@ class ImportHopVarietyJobTest extends TestCase
 
         Log::shouldReceive("warning")
             ->once()
-            ->withArgs(fn(string $msg) => Str::contains($msg, "Failed to parse"));
+            ->withArgs(fn(string $msg): bool => Str::contains($msg, "Failed to parse"));
 
         ImportHopVarietyJob::dispatchSync("hops_data/bad.json5");
 
@@ -90,7 +90,7 @@ class ImportHopVarietyJobTest extends TestCase
 
         Log::shouldReceive("warning")
             ->once()
-            ->withArgs(fn(string $msg) => Str::contains($msg, "Validation failed"));
+            ->withArgs(fn(string $msg): bool => Str::contains($msg, "Validation failed"));
 
         ImportHopVarietyJob::dispatchSync("hops_data/invalid.json5");
 

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace HopsWeb\Actions;
 
+use HopsWeb\ValueObjects\RangeOrNumber;
+
 class MapHopData
 {
     public function execute(array $data): array
     {
+        $ingredients = $data["ingredients"] ?? [];
         $agronomic = $data["agronomic"] ?? [];
         $yield = $agronomic["yield"] ?? null;
 
@@ -18,23 +21,15 @@ class MapHopData
             "description" => $data["origin"] ?? null,
             "descriptors" => $data["descriptors"] ?? [],
             "lineage" => $data["lineage"] ?? [],
-            "alpha_acid_min" => $data["ingredients"]["alphas"]["min"] ?? null,
-            "alpha_acid_max" => $data["ingredients"]["alphas"]["max"] ?? null,
-            "beta_acid_min" => $data["ingredients"]["betas"]["min"] ?? null,
-            "beta_acid_max" => $data["ingredients"]["betas"]["max"] ?? null,
-            "cohumulone_min" => $data["ingredients"]["cohumulones"]["min"] ?? null,
-            "cohumulone_max" => $data["ingredients"]["cohumulones"]["max"] ?? null,
-            "total_oil_min" => $data["ingredients"]["oils"]["min"] ?? null,
-            "total_oil_max" => $data["ingredients"]["oils"]["max"] ?? null,
-            "polyphenol_min" => $data["ingredients"]["polyphenols"]["min"] ?? null,
-            "polyphenol_max" => $data["ingredients"]["polyphenols"]["max"] ?? null,
-            "xanthohumol_min" => $data["ingredients"]["xanthohumols"]["min"] ?? null,
-            "xanthohumol_max" => $data["ingredients"]["xanthohumols"]["max"] ?? null,
-            "farnesene_min" => $data["ingredients"]["farnesenes"]["min"] ?? null,
-            "farnesene_max" => $data["ingredients"]["farnesenes"]["max"] ?? null,
-            "linalool_min" => $data["ingredients"]["linalool"]["min"] ?? null,
-            "linalool_max" => $data["ingredients"]["linalool"]["max"] ?? null,
-            "thiols" => $data["ingredients"]["thiols"] ?? null,
+            "alpha_acid" => $this->extractRange($ingredients["alphas"] ?? null),
+            "beta_acid" => $this->extractRange($ingredients["betas"] ?? null),
+            "cohumulone" => $this->extractRange($ingredients["cohumulones"] ?? null),
+            "total_oil" => $this->extractRange($ingredients["oils"] ?? null),
+            "polyphenol" => $this->extractRange($ingredients["polyphenols"] ?? null),
+            "xanthohumol" => $this->extractRange($ingredients["xanthohumols"] ?? null),
+            "farnesene" => $this->extractRange($ingredients["farnesenes"] ?? null),
+            "linalool" => $this->extractRange($ingredients["linalool"] ?? null),
+            "thiols" => $ingredients["thiols"] ?? null,
             "aroma_citrusy" => $data["aroma"]["citrusy"] ?? null,
             "aroma_fruity" => $data["aroma"]["fruity"] ?? null,
             "aroma_floral" => $data["aroma"]["floral"] ?? null,
@@ -53,6 +48,26 @@ class MapHopData
             "aphid" => $agronomic["aphid"] ?? null,
             "substitutes" => $this->extractSubstitutes($data),
         ];
+    }
+
+    private function extractRange(?array $ingredientData): ?RangeOrNumber
+    {
+        if ($ingredientData === null) {
+            return null;
+        }
+
+        $min = $ingredientData["min"] ?? null;
+        $max = $ingredientData["max"] ?? null;
+
+        if ($min === null && $max === null) {
+            return null;
+        }
+
+        if ($min !== null && $max !== null) {
+            return RangeOrNumber::fromRange((float)$min, (float)$max);
+        }
+
+        return RangeOrNumber::fromNumber((float)($min ?? $max));
     }
 
     private function extractSubstitutes(array $data): array
