@@ -46,6 +46,11 @@ class User extends Authenticatable
         return $this->hasMany(Agenda::class);
     }
 
+    public function hopQueries(): HasMany
+    {
+        return $this->hasMany(HopQuery::class);
+    }
+
     protected function casts(): array
     {
         return [
