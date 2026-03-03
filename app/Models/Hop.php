@@ -54,6 +54,17 @@ class Hop extends Model
 {
     use HasFactory;
 
+    public const array RANGE_FIELDS = [
+        "alpha_acid",
+        "beta_acid",
+        "cohumulone",
+        "total_oil",
+        "polyphenol",
+        "xanthohumol",
+        "farnesene",
+        "linalool",
+    ];
+
     protected $fillable = [
         "name",
         "slug",

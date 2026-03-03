@@ -36,7 +36,5 @@ class HopsImportCommand extends Command
             $this->info("Dispatching import for: {$file}");
             ImportHopVarietyJob::dispatch($file);
         }
-
-        $this->info("All import jobs have been dispatched to queue, run `php artisan queue:work` to process them.");
     }
 }

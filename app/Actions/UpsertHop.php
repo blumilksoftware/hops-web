@@ -5,48 +5,28 @@ declare(strict_types=1);
 namespace HopsWeb\Actions;
 
 use HopsWeb\Models\Hop;
+use HopsWeb\ValueObjects\RangeOrNumber;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class UpsertHop
 {
-    private const array RANGE_FIELDS = [
-        "alpha_acid",
-        "beta_acid",
-        "cohumulone",
-        "total_oil",
-        "polyphenol",
-        "xanthohumol",
-        "farnesene",
-        "linalool",
-    ];
-
     public function execute(array $data): Hop
     {
-        $rangeValues = $this->extractRangeValues($data);
         $validated = $this->validate($data);
 
         return Hop::updateOrCreate(
             ["name" => $validated["name"]],
-            $this->buildAttributes($validated, $rangeValues),
+            $this->buildAttributes($validated),
         );
-    }
-
-    private function extractRangeValues(array $data): array
-    {
-        $rangeValues = [];
-
-        foreach (self::RANGE_FIELDS as $field) {
-            $rangeValues[$field] = $data[$field] ?? null;
-        }
-
-        return $rangeValues;
     }
 
     private function validate(array $data): array
     {
-        $filteredData = array_diff_key($data, array_flip(self::RANGE_FIELDS));
+        $this->validateRangeFields($data);
+
+        $filteredData = array_diff_key($data, array_flip(Hop::RANGE_FIELDS));
 
         $validator = Validator::make($filteredData, [
             "name" => ["required", "string", "max:255"],
@@ -86,10 +66,37 @@ class UpsertHop
             throw new ValidationException($validator);
         }
 
-        return $validator->validated();
+        $validated = $validator->validated();
+
+        foreach (Hop::RANGE_FIELDS as $field) {
+            $validated[$field] = $data[$field] ?? null;
+        }
+
+        return $validated;
     }
 
-    private function buildAttributes(array $validated, array $rangeValues): array
+    private function validateRangeFields(array $data): void
+    {
+        $errors = [];
+
+        foreach (Hop::RANGE_FIELDS as $field) {
+            $value = $data[$field] ?? null;
+
+            if ($value === null) {
+                continue;
+            }
+
+            if (!$value instanceof RangeOrNumber) {
+                $errors[$field][] = "The {$field} field must be a valid RangeOrNumber instance.";
+            }
+        }
+
+        if (!empty($errors)) {
+            throw ValidationException::withMessages($errors);
+        }
+    }
+
+    private function buildAttributes(array $validated): array
     {
         return [
             "slug" => Str::slug($validated["name"]) . "-hop",
@@ -98,14 +105,14 @@ class UpsertHop
             "description" => $validated["description"] ?? null,
             "descriptors" => $validated["descriptors"] ?? [],
             "lineage" => $validated["lineage"] ?? [],
-            "alpha_acid" => $rangeValues["alpha_acid"],
-            "beta_acid" => $rangeValues["beta_acid"],
-            "cohumulone" => $rangeValues["cohumulone"],
-            "total_oil" => $rangeValues["total_oil"],
-            "polyphenol" => $rangeValues["polyphenol"],
-            "xanthohumol" => $rangeValues["xanthohumol"],
-            "farnesene" => $rangeValues["farnesene"],
-            "linalool" => $rangeValues["linalool"],
+            "alpha_acid" => $validated["alpha_acid"],
+            "beta_acid" => $validated["beta_acid"],
+            "cohumulone" => $validated["cohumulone"],
+            "total_oil" => $validated["total_oil"],
+            "polyphenol" => $validated["polyphenol"],
+            "xanthohumol" => $validated["xanthohumol"],
+            "farnesene" => $validated["farnesene"],
+            "linalool" => $validated["linalool"],
             "thiols" => $validated["thiols"] ?? null,
             "aroma_citrusy" => $validated["aroma_citrusy"] ?? null,
             "aroma_fruity" => $validated["aroma_fruity"] ?? null,
