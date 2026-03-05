@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HopsWeb\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -20,6 +21,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property bool $is_team_member
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property Collection<int, Agenda> $agendas
  */
 class User extends Authenticatable
 {
@@ -38,6 +40,11 @@ class User extends Authenticatable
         "password",
         "remember_token",
     ];
+
+    public function agendas(): HasMany
+    {
+        return $this->hasMany(Agenda::class);
+    }
 
     public function hopQueries(): HasMany
     {
