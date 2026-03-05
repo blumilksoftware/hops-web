@@ -6,6 +6,10 @@ namespace Database\Factories;
 
 use HopsWeb\Enums\Aromaticity;
 use HopsWeb\Enums\Bitterness;
+use HopsWeb\Enums\HopDescriptor;
+use HopsWeb\Enums\HopLineage;
+use HopsWeb\Enums\HopMaturity;
+use HopsWeb\Enums\Resistance;
 use HopsWeb\Models\Hop;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -37,8 +41,8 @@ class HopFactory extends Factory
             "alt_name" => $this->faker->optional()->word(),
             "country" => $this->faker->countryCode(),
             "description" => $this->faker->paragraph(),
-            "descriptors" => $this->faker->randomElements(["fruity", "citrusy", "herbal", "spicy", "floral", "resinous"], 2),
-            "lineage" => $this->faker->optional()->randomElements(["brewers-gold", "fuggle", "cascade"], 2),
+            "descriptors" => $this->faker->randomElements(HopDescriptor::values(), 2),
+            "lineage" => $this->faker->optional()->randomElements(HopLineage::values(), 2),
             "alpha_acid_min" => $alphaMin,
             "alpha_acid_max" => $alphaMin + $this->faker->randomFloat(1, 1, 5),
             "beta_acid_min" => $betaMin,
@@ -55,7 +59,7 @@ class HopFactory extends Factory
             "farnesene_max" => $farneseneMin + $this->faker->randomFloat(1, 1, 5),
             "linalool_min" => $linaloolMin,
             "linalool_max" => $linaloolMin + $this->faker->randomFloat(1, 0.1, 0.5),
-            "thiols" => $this->faker->randomElement(["low", "medium", "high"]),
+            "thiols" => $this->faker->randomElement(Aromaticity::values()),
             "aroma_citrusy" => $this->faker->numberBetween(0, 5),
             "aroma_fruity" => $this->faker->numberBetween(0, 5),
             "aroma_floral" => $this->faker->numberBetween(0, 5),
@@ -71,11 +75,11 @@ class HopFactory extends Factory
             ],
             "yield_min" => $yieldMin,
             "yield_max" => $yieldMin + $this->faker->numberBetween(100, 500),
-            "maturity" => $this->faker->optional()->randomElement(["early", "mid early", "mid late", "late", "very late"]),
-            "wilt_disease" => $this->faker->optional()->randomElement(["resistant", "tolerant", "susceptible"]),
-            "downy_mildew" => $this->faker->optional()->randomElement(["resistant", "tolerant", "susceptible"]),
-            "powdery_mildew" => $this->faker->optional()->randomElement(["resistant", "tolerant", "susceptible"]),
-            "aphid" => $this->faker->optional()->randomElement(["resistant", "tolerant", "susceptible"]),
+            "maturity" => $this->faker->optional()->randomElement(HopMaturity::values()),
+            "wilt_disease" => $this->faker->optional()->randomElement(Resistance::values()),
+            "downy_mildew" => $this->faker->optional()->randomElement(Resistance::values()),
+            "powdery_mildew" => $this->faker->optional()->randomElement(Resistance::values()),
+            "aphid" => $this->faker->optional()->randomElement(Resistance::values()),
             "bitterness" => $this->faker->optional()->randomElement(Bitterness::values()),
             "aromaticity" => $this->faker->optional()->randomElement(Aromaticity::values()),
         ];
