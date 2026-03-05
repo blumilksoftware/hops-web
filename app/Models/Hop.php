@@ -14,8 +14,11 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property string $name
  * @property string $slug
+ * @property ?string $alt_name
  * @property ?string $country
  * @property ?string $description
+ * @property ?array<string> $descriptors
+ * @property ?array<string> $lineage
  * @property ?RangeOrNumber $alpha_acid
  * @property ?RangeOrNumber $beta_acid
  * @property ?RangeOrNumber $cohumulone
@@ -24,6 +27,7 @@ use Illuminate\Support\Carbon;
  * @property ?RangeOrNumber $xanthohumol
  * @property ?RangeOrNumber $farnesene
  * @property ?RangeOrNumber $linalool
+ * @property ?string $thiols
  * @property ?int $aroma_citrusy
  * @property ?int $aroma_fruity
  * @property ?int $aroma_floral
@@ -31,9 +35,16 @@ use Illuminate\Support\Carbon;
  * @property ?int $aroma_spicy
  * @property ?int $aroma_resinous
  * @property ?int $aroma_sugarlike
- * @property ?int $aroma_miscellaneous
- * @property ?array $aroma_descriptors
- * @property ?array $substitutes
+ * @property ?int $aroma_misc
+ * @property ?array<string> $aroma_descriptors
+ * @property ?array{brewhouse: array<string>, dryhopping: array<string>} $substitutes
+ * @property ?int $yield_min
+ * @property ?int $yield_max
+ * @property ?string $maturity
+ * @property ?string $wilt_disease
+ * @property ?string $downy_mildew
+ * @property ?string $powdery_mildew
+ * @property ?string $aphid
  * @property ?string $bitterness
  * @property ?string $aromaticity
  * @property ?Carbon $created_at
@@ -43,11 +54,7 @@ class Hop extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        "name",
-        "slug",
-        "country",
-        "description",
+    public const array RANGE_FIELDS = [
         "alpha_acid",
         "beta_acid",
         "cohumulone",
@@ -56,6 +63,25 @@ class Hop extends Model
         "xanthohumol",
         "farnesene",
         "linalool",
+    ];
+
+    protected $fillable = [
+        "name",
+        "slug",
+        "alt_name",
+        "country",
+        "description",
+        "descriptors",
+        "lineage",
+        "alpha_acid",
+        "beta_acid",
+        "cohumulone",
+        "total_oil",
+        "polyphenol",
+        "xanthohumol",
+        "farnesene",
+        "linalool",
+        "thiols",
         "aroma_citrusy",
         "aroma_fruity",
         "aroma_floral",
@@ -63,9 +89,16 @@ class Hop extends Model
         "aroma_spicy",
         "aroma_resinous",
         "aroma_sugarlike",
-        "aroma_miscellaneous",
+        "aroma_misc",
         "aroma_descriptors",
         "substitutes",
+        "yield_min",
+        "yield_max",
+        "maturity",
+        "wilt_disease",
+        "downy_mildew",
+        "powdery_mildew",
+        "aphid",
         "bitterness",
         "aromaticity",
     ];
@@ -78,6 +111,8 @@ class Hop extends Model
         "xanthohumol" => RangeOrNumberCast::class,
         "farnesene" => RangeOrNumberCast::class,
         "linalool" => RangeOrNumberCast::class,
+        "descriptors" => "array",
+        "lineage" => "array",
         "aroma_descriptors" => "array",
         "substitutes" => "array",
     ];

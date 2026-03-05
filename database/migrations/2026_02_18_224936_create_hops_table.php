@@ -13,8 +13,11 @@ return new class() extends Migration {
             $table->id();
             $table->string("name")->unique();
             $table->string("slug")->unique();
+            $table->string("alt_name")->nullable();
             $table->string("country")->nullable();
             $table->text("description")->nullable();
+            $table->json("descriptors")->nullable();
+            $table->json("lineage")->nullable();
             $table->decimal("alpha_acid_min", places: 4)->nullable();
             $table->decimal("alpha_acid_max", places: 4)->nullable();
             $table->decimal("beta_acid_min", places: 4)->nullable();
@@ -31,6 +34,7 @@ return new class() extends Migration {
             $table->decimal("farnesene_max", places: 4)->nullable();
             $table->decimal("linalool_min", places: 4)->nullable();
             $table->decimal("linalool_max", places: 4)->nullable();
+            $table->string("thiols")->nullable();
             $table->tinyInteger("aroma_citrusy")->nullable();
             $table->tinyInteger("aroma_fruity")->nullable();
             $table->tinyInteger("aroma_floral")->nullable();
@@ -38,9 +42,16 @@ return new class() extends Migration {
             $table->tinyInteger("aroma_spicy")->nullable();
             $table->tinyInteger("aroma_resinous")->nullable();
             $table->tinyInteger("aroma_sugarlike")->nullable();
-            $table->tinyInteger("aroma_miscellaneous")->nullable();
-            $table->json("aroma_descriptors")->nullable(); 
+            $table->tinyInteger("aroma_misc")->nullable();
+            $table->json("aroma_descriptors")->nullable();
             $table->json("substitutes")->nullable();
+            $table->integer("yield_min")->nullable();
+            $table->integer("yield_max")->nullable();
+            $table->string("maturity")->nullable();
+            $table->string("wilt_disease")->nullable();
+            $table->string("downy_mildew")->nullable();
+            $table->string("powdery_mildew")->nullable();
+            $table->string("aphid")->nullable();
             $table->string("bitterness")->nullable();
             $table->string("aromaticity")->nullable();
             $table->timestamps();
