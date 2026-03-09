@@ -6,7 +6,7 @@ namespace HopsWeb\ValueObjects;
 
 use InvalidArgumentException;
 
-class Range
+class RangeOrNumber
 {
     public function __construct(
         public readonly ?float $min,
