@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace HopsWeb\Models;
 
 use HopsWeb\Casts\RangeOrNumberCast;
+use HopsWeb\Enums\Aromaticity;
+use HopsWeb\Enums\Bitterness;
+use HopsWeb\Enums\HopDescriptor;
+use HopsWeb\Enums\HopLineage;
+use HopsWeb\Enums\HopMaturity;
+use HopsWeb\Enums\Resistance;
 use HopsWeb\ValueObjects\RangeOrNumber;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -17,8 +23,8 @@ use Illuminate\Support\Carbon;
  * @property ?string $alt_name
  * @property ?string $country
  * @property ?string $description
- * @property ?array<string> $descriptors
- * @property ?array<string> $lineage
+ * @property ?array<HopDescriptor> $descriptors
+ * @property ?array<HopLineage> $lineage
  * @property ?RangeOrNumber $alpha_acid
  * @property ?RangeOrNumber $beta_acid
  * @property ?RangeOrNumber $cohumulone
@@ -27,7 +33,7 @@ use Illuminate\Support\Carbon;
  * @property ?RangeOrNumber $xanthohumol
  * @property ?RangeOrNumber $farnesene
  * @property ?RangeOrNumber $linalool
- * @property ?string $thiols
+ * @property ?Aromaticity $thiols
  * @property ?int $aroma_citrusy
  * @property ?int $aroma_fruity
  * @property ?int $aroma_floral
@@ -40,13 +46,13 @@ use Illuminate\Support\Carbon;
  * @property ?array{brewhouse: array<string>, dryhopping: array<string>} $substitutes
  * @property ?int $yield_min
  * @property ?int $yield_max
- * @property ?string $maturity
- * @property ?string $wilt_disease
- * @property ?string $downy_mildew
- * @property ?string $powdery_mildew
- * @property ?string $aphid
- * @property ?string $bitterness
- * @property ?string $aromaticity
+ * @property ?HopMaturity $maturity
+ * @property ?Resistance $wilt_disease
+ * @property ?Resistance $downy_mildew
+ * @property ?Resistance $powdery_mildew
+ * @property ?Resistance $aphid
+ * @property ?Bitterness $bitterness
+ * @property ?Aromaticity $aromaticity
  * @property ?Carbon $created_at
  * @property ?Carbon $updated_at
  */
