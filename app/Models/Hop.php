@@ -121,5 +121,47 @@ class Hop extends Model
         "lineage" => "array",
         "aroma_descriptors" => "array",
         "substitutes" => "array",
+        "bitterness" => Bitterness::class,
+        "aromaticity" => Aromaticity::class,
     ];
+
+    public function scopeFilter($query, array $filters)
+    {
+        foreach (self::RANGE_FIELDS as $field) {
+            if (isset($filters[$field . "_min"])) {
+                $query->where($field . "_max", ">=", $filters[$field . "_min"]);
+            }
+
+            if (isset($filters[$field . "_max"])) {
+                $query->where($field . "_min", "<=", $filters[$field . "_max"]);
+            }
+        }
+
+        $aromaFlags = [
+            "aroma_citrusy",
+            "aroma_fruity",
+            "aroma_floral",
+            "aroma_herbal",
+            "aroma_spicy",
+            "aroma_resinous",
+            "aroma_sugarlike",
+            "aroma_misc",
+        ];
+
+        foreach ($aromaFlags as $flag) {
+            if (isset($filters[$flag]) && $filters[$flag] === 1) {
+                $query->where($flag, 1);
+            }
+        }
+
+        if (isset($filters["bitterness"]) && $filters["bitterness"] !== "all") {
+            $query->where("bitterness", $filters["bitterness"]);
+        }
+
+        if (isset($filters["aromaticity"]) && $filters["aromaticity"] !== "all") {
+            $query->where("aromaticity", $filters["aromaticity"]);
+        }
+
+        return $query;
+    }
 }
