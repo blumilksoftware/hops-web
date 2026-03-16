@@ -18,7 +18,7 @@
             </nav>
 
             <div class="lg:grid lg:grid-cols-2 lg:gap-x-12 lg:items-start">
-                <!-- Info Summary -->
+
                 <div class="flex flex-col">
                     <h2 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl mb-4">{{ $hop->name }}</h2>
                     <div class="flex items-center space-x-4 mb-8">
@@ -32,6 +32,17 @@
 
                     <div class="prose prose-green text-gray-500 max-w-none">
                         <p>{{ $hop->description ?? 'Detailed description for this hop variety is currently being compiled.' }}</p>
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Aroma Profile</h3>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach($hop->getActiveAromas() as $aroma)
+                                <span class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-semibold bg-green-100 text-green-800 border border-green-200 shadow-sm">
+                                    {{ $aroma->label() }}
+                                </span>
+                            @endforeach
+                        </div>
                     </div>
 
                     <div class="mt-8">
@@ -74,7 +85,7 @@
                     @endif
                 </div>
 
-                <!-- Biochemical Profile -->
+
                 <div class="mt-16 lg:mt-0 bg-gray-50 rounded-2xl p-8 border border-gray-100 shadow-sm">
                     <h3 class="text-xl font-bold text-gray-900 mb-8 border-b border-gray-200 pb-4">Biochemical Profile</h3>
                     

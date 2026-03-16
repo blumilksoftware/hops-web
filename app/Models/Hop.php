@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HopsWeb\Models;
 
 use HopsWeb\Casts\RangeOrNumberCast;
+use HopsWeb\Enums\AromaProfile;
 use HopsWeb\Enums\Aromaticity;
 use HopsWeb\Enums\Bitterness;
 use HopsWeb\Enums\HopDescriptor;
@@ -137,19 +138,10 @@ class Hop extends Model
             }
         }
 
-        $aromaFlags = [
-            "aroma_citrusy",
-            "aroma_fruity",
-            "aroma_floral",
-            "aroma_herbal",
-            "aroma_spicy",
-            "aroma_resinous",
-            "aroma_sugarlike",
-            "aroma_misc",
-        ];
+        foreach (AromaProfile::cases() as $profile) {
+            $flag = $profile->value;
 
-        foreach ($aromaFlags as $flag) {
-            if (isset($filters[$flag]) && $filters[$flag] === 1) {
+            if (isset($filters[$flag]) && $filters[$flag] === "1") {
                 $query->where($flag, 1);
             }
         }
@@ -163,5 +155,16 @@ class Hop extends Model
         }
 
         return $query;
+    }
+
+    /**
+     * @return array<AromaProfile>
+     */
+    public function getActiveAromas(): array
+    {
+        return array_filter(
+            AromaProfile::cases(),
+            fn(AromaProfile $profile) => (bool)$this->{$profile->value},
+        );
     }
 }
