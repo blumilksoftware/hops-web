@@ -14,7 +14,11 @@ class DemoSeeder extends Seeder
     public function run(): void
     {
         Hop::factory(50)->create();
-        User::factory(10)->create();
+        User::factory(30)->create();
+
+        User::factory(["name" => "Admin", "email" => "admin@example.com", "password" => "password"])->admin()->create();
+        User::factory(["name" => "Team Member", "email" => "member@example.com", "password" => "password"])->teamMember()->create();
+
         HopQuery::factory(10)->for(User::first())->create();
     }
 }
