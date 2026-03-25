@@ -10,6 +10,9 @@ on:
       - 'package.json'
       - 'package.lock'
 
+permissions:
+  contents: read
+
 jobs:
   test-and-lint-js:
     name: Test & lint JS codebase
