@@ -1,14 +1,10 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Users') }}
-        </h2>
-    </x-slot>
-
+<x-admin-layout>
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Users') }}
+        </h2>
                 <div class="p-6 text-gray-900">
                     <div class="mb-4 flex justify-between items-center">
                         <form method="GET" action="{{ route('admin.users.index') }}" class="flex items-center gap-2">
@@ -23,8 +19,7 @@
                                 <tr>
                                     <th class="px-6 py-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Name</th>
                                     <th class="px-6 py-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Email</th>
-                                    <th class="px-6 py-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Admin</th>
-                                    <th class="px-6 py-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Team Member</th>
+                                    <th class="px-6 py-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Roles</th>
                                     <th class="px-6 py-6 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Created At</th>
                                     <th class="px-6 py-6 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                 </tr>
@@ -33,20 +28,18 @@
                                 @foreach ($users as $user)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap flex justify-between items-center">{{ $user->name }}
-                                            @if($user->isAuthUser())
+                                            @if($user->isUserCurrentlyAuthenticated())
                                                 <span class="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-gray-300 text-gray-800">You</span>
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">{{ $user->email }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->is_admin ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                                {{ $user->is_admin ? 'Yes' : 'No' }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $user->is_team_member ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800' }}">
-                                                {{ $user->is_team_member ? 'Yes' : 'No' }}
-                                            </span>
+                                            @if ($user->is_admin)
+                                                <span class="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800">Admin</span>
+                                            @endif
+                                            @if ($user->is_team_member)
+                                                <span class="px-2 inline-flex text-sm leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Team Member</span>
+                                            @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->created_at->format('Y-m-d H:i') }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -54,7 +47,7 @@
                                                 <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
                                                     {{ __('Edit') }}
                                                 </a>
-                                                @if (auth()->id() !== $user->id)
+                                                @if (!$user->isUserCurrentlyAuthenticated())
                                                     <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure?')">
                                                         @csrf
                                                         @method('DELETE')
@@ -78,4 +71,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>
