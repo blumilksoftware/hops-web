@@ -28,7 +28,8 @@
                             </div>
                         </button>
                     </x-slot>
-
+                    
+                    @if(Auth::user())
                     <x-slot name="content" class="hidden">
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}
@@ -44,6 +45,16 @@
                             </x-dropdown-link>
                         </form>
                     </x-slot>
+                    @else
+                    <x-slot name="content" class="hidden">
+                        <x-dropdown-link :href="route('login')">
+                            {{ __('Log In') }}
+                        </x-dropdown-link>
+                        <x-dropdown-link :href="route('register')">
+                            {{ __('Register') }}
+                        </x-dropdown-link>
+                    </x-slot>
+                    @endif
                 </x-dropdown>
             </div>
 

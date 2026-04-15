@@ -14,6 +14,21 @@
                         @method('PUT')
 
                         <div class="mb-4">
+                            <label class="flex flex-col">
+                                <span class="ml-2 text-sm text-gray-600">{{ __('Name') }}</span>
+                                <input type="text" name="name" value="{{ $user->name ? $user->name : "Not defined" }}" class="rounded border-gray-300 shadow-sm focus:ring-indigo-500">
+                                <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                            </label>
+                        </div>
+                        <div class="mb-4">
+                            <label class="flex flex-col">
+                                <span class="ml-2 text-sm text-gray-600">{{ __('Email') }}</span>
+                                <input type="text" name="email" value="{{ $user->email ? $user->email : "Not defined" }}" class="rounded border-gray-300 shadow-sm focus:ring-indigo-500">
+                                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                            </label>
+                        </div>
+
+                        <div class="mb-4">
                             <label class="inline-flex items-center">
                                 <input type="checkbox" name="is_admin" value="1" {{ $user->is_admin ? 'checked' : '' }} class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500">
                                 <span class="ml-2 text-sm text-gray-600">{{ __('Admin') }}</span>
