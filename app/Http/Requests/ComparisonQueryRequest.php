@@ -7,6 +7,7 @@ namespace HopsWeb\Http\Requests;
 use HopsWeb\Enums\Aromaticity;
 use HopsWeb\Enums\Bitterness;
 use HopsWeb\Enums\HopDescriptor;
+use HopsWeb\Rules\AttributeNotEmptyAfterTrim;
 use HopsWeb\Rules\RangeOrNumberOrNull;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
