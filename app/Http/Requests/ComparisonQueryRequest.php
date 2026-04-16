@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace HopsWeb\Http\Requests;
 
-use Closure;
 use HopsWeb\Enums\Aromaticity;
 use HopsWeb\Enums\Bitterness;
 use HopsWeb\Enums\HopDescriptor;
@@ -25,17 +24,9 @@ class ComparisonQueryRequest extends FormRequest
         return [
             "target" => ["nullable", "array"],
             "target.present" => ["nullable", "array"],
-            "target.present.*" => ["required", "string", function (string $attribute, mixed $value, Closure $fail): void {
-                if (trim((string)$value) === "") {
-                    $fail("The {$attribute} must not be empty after trimming.");
-                }
-            }],
+            "target.present.*" => ["required", "string", new AttributeNotEmptyAfterTrim()],
             "target.absent" => ["nullable", "array"],
-            "target.absent.*" => ["required", "string", function (string $attribute, mixed $value, Closure $fail): void {
-                if (trim((string)$value) === "") {
-                    $fail("The {$attribute} must not be empty after trimming.");
-                }
-            }],
+            "target.absent.*" => ["required", "string", new AttributeNotEmptyAfterTrim()],
 
             "aroma" => ["nullable", "array"],
             "aroma.present" => ["nullable", "array"],
@@ -45,17 +36,9 @@ class ComparisonQueryRequest extends FormRequest
 
             "description" => ["nullable", "array"],
             "description.present" => ["nullable", "array"],
-            "description.present.*" => ["required", "string", function (string $attribute, mixed $value, Closure $fail): void {
-                if (trim((string)$value) === "") {
-                    $fail("The {$attribute} must not be empty after trimming.");
-                }
-            }],
+            "description.present.*" => ["required", "string", new AttributeNotEmptyAfterTrim()],
             "description.absent" => ["nullable", "array"],
-            "description.absent.*" => ["required", "string", function (string $attribute, mixed $value, Closure $fail): void {
-                if (trim((string)$value) === "") {
-                    $fail("The {$attribute} must not be empty after trimming.");
-                }
-            }],
+            "description.absent.*" => ["required", "string", new AttributeNotEmptyAfterTrim()],
 
             "ingredients" => ["nullable", "array"],
             "ingredients.alphas" => ["nullable", new RangeOrNumberOrNull()],
