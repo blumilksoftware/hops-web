@@ -1,16 +1,16 @@
 FROM registry.blumilk.pl/internal-public/secops-tools-bin:v1.2.0@sha256:be2755b1afeeae009abdeeb61b7214776776df5b50c818c1546072563139d12c AS secops-tools-bin
-FROM composer:2.9.5 AS composer
-FROM ghcr.io/php/pie:1.3.8-bin AS pie-bin
-FROM node:24.13.1-trixie-slim AS node
+FROM composer:2.9.5@sha256:698d3801b2a622ace460c4743c781282fcbcb733a4cbf8b31c44731e846585e8 AS composer
+FROM ghcr.io/php/pie:1.3.10-bin@sha256:e901fc8ffd545e39793ef7b3e305da0856a740dbd6f95caa7f991cbde9eee2fa AS pie-bin
+FROM node:24.14.1-trixie-slim@sha256:9707cd4542f400df5078df04f9652a272429112f15202d22b5b8bdd148df494f AS node
 
-FROM php:8.5.3-fpm-trixie AS base
+FROM php:8.5.5-fpm-trixie@sha256:3525cfee24cd88e8a215adc8238e0046686907fced10bb0cac22da4bf889981a AS base
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY --from=pie-bin /pie /usr/bin/pie
 
 # For other versions check: https://nginx.org/packages/mainline/debian/pool/nginx/n/nginx/
 # renovate: datasource=github-tags depName=nginx/nginx extractVersion=^release-(?<version>.*)$
-ARG NGINX_VERSION="1.29.5"
+ARG NGINX_VERSION="1.29.8"
 
 # renovate: datasource=github-tags depName=phpredis/phpredis
 ARG PHPREDIS_VERSION=6.3.0
