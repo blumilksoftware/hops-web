@@ -154,6 +154,10 @@ class Hop extends Model
             $query->where("aromaticity", $filters["aromaticity"]);
         }
 
+        if (isset($filters["countries"]) && is_array($filters["countries"]) && count($filters["countries"]) > 0) {
+            $query->whereIn("country", $filters["countries"]);
+        }
+
         return $query;
     }
 

@@ -18,7 +18,7 @@ class HopBrowserTest extends TestCase
         Hop::factory()->create(["name" => "Citra", "slug" => "citra"]);
         Hop::factory()->create(["name" => "Mosaic", "slug" => "mosaic"]);
 
-        $response = $this->get("/hops");
+        $response = $this->get("/");
 
         $response->assertStatus(200);
         $response->assertSee("Citra");
@@ -41,7 +41,7 @@ class HopBrowserTest extends TestCase
         Hop::factory()->create(["name" => "Citrusy Hop", "slug" => "citrusy-hop", "aroma_citrusy" => 1]);
         Hop::factory()->create(["name" => "Fruity Hop", "slug" => "fruity-hop", "aroma_citrusy" => 0]);
 
-        $response = $this->get("/hops?aroma_citrusy=1");
+        $response = $this->get("/?aroma_citrusy=1");
 
         $response->assertStatus(200);
         $response->assertSee("Citrusy Hop");
@@ -62,7 +62,7 @@ class HopBrowserTest extends TestCase
             "alpha_acid" => RangeOrNumber::fromRange(4, 6),
         ]);
 
-        $response = $this->get("/hops?alpha_acid_min=8");
+        $response = $this->get("/?alpha_acid_min=8");
 
         $response->assertStatus(200);
         $response->assertSee("High Alpha");

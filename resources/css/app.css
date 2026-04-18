@@ -1,3 +1,13 @@
 @import 'tailwindcss';
 @source "../views/**/*.blade.php";
 @plugin "@tailwindcss/forms";
+
+@theme {
+  --color-hops-darkest: #37330C;
+  --color-hops-dark: #4E4C12;
+  --color-hops-mid: #6F7A31;
+  --color-hops-warm: #97933B;
+  --color-hops-accent: #A6AE34;
+  --color-hops-light: #F6F6F6;
+  --color-hops-ink: #1C1C1C;
+}

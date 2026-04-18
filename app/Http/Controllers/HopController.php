@@ -18,9 +18,16 @@ class HopController extends Controller
             ->paginate(12)
             ->withQueryString();
 
+        $countries = Hop::query()
+            ->whereNotNull("country")
+            ->distinct()
+            ->orderBy("country")
+            ->pluck("country");
+
         return view("hops.index", [
             "hops" => $hops,
             "filters" => $request->all(),
+            "countries" => $countries,
         ]);
     }
 
