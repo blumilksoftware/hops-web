@@ -13,6 +13,11 @@ class UserPolicy
         return $user->is_admin;
     }
 
+    public function store(User $user): bool
+    {
+        return $user->is_admin;
+    }
+
     public function update(User $user, User $model): bool
     {
         return $user->is_admin;

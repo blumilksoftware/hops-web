@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace HopsWeb\Http\Requests\Admin;
 
+use HopsWeb\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateUserRequest extends FormRequest
+class CreateUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->can("update", $this->route("user"));
+        return $this->user()->can("store", User::class);
     }
 
     public function rules(): array
@@ -22,8 +23,9 @@ class UpdateUserRequest extends FormRequest
                 "string",
                 "email",
                 "max:255",
-                Rule::unique("users")->ignore($this->route("user")),
+                Rule::unique("users"),
             ],
+            "password" => ["required", "string", "min:8"],
             "is_admin" => ["boolean"],
             "is_team_member" => ["boolean"],
         ];

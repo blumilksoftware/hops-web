@@ -16,6 +16,17 @@ export default {
       },
     },
   },
+  colors: {
+    hops: {
+      darkest:   '#37330C',
+      dark:      '#4E4C12',
+      mid:       '#6F7A31',
+      warm:      '#97933B',
+      accent:    '#A6AE34',
+      light:     '#F6F6F6',
+      ink:       '#1C1C1C',
+    },
+  },
 
   plugins: [forms],
 }
