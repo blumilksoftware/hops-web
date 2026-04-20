@@ -161,9 +161,6 @@ class Hop extends Model
         return $query;
     }
 
-    /**
-     * @return array<AromaProfile>
-     */
     public function getActiveAromas(): array
     {
         return array_filter(

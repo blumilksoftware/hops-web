@@ -45,16 +45,9 @@
     <div class="flex flex-col ">
         <div class="flex flex-wrap gap-1 mt-3">
             @foreach ($hop->getActiveAromas() as $index => $aroma)
-                @if ($aroma->value === 'aroma_spicy' && $hop->aroma_spicy > 0)
-                    <span
-                        class="px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-50 text-orange-600 border border-orange-300">
-                        {{ __($aroma->label()) }}
-                    </span>
-                @else
-                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold border-gray-300 border">
-                        {{ __($aroma->label()) }}
-                    </span>
-                @endif
+                <span class="ml-1 mr-1 py-0.5 text-xs font-semibold border-b-2 rounded-none border-{{ $aroma->color() }}">
+                    {{ __($aroma->label()) }}
+                </span>
             @endforeach
         </div>
 
