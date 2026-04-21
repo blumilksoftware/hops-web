@@ -7,13 +7,15 @@
     "require": {
         "php": "^8.5",
         "ext-pdo": "*",
+        "andreiio/blade-remix-icon": "^3.9",
         "blade-ui-kit/blade-icons": "^1.9",
         "codeat3/blade-ant-design-icons": "^1.10",
         "codeat3/blade-fluentui-system-icons": "^1.35",
         "guzzlehttp/guzzle": "^7.10.0",
         "laravel/framework": "^12.56.0",
         "laravel/sanctum": "^4.3.1",
-        "laravel/tinker": "^2.11.1"
+        "laravel/tinker": "^2.11.1",
+        "owenvoke/blade-fontawesome": "^3.2"
     },
     "require-dev": {
         "blumilksoftware/blt": "^1.0",

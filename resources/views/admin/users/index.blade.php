@@ -106,8 +106,8 @@
 
                                                 <a href="{{ route('admin.users.edit', $user) }}"
                                                 >
-                                                    <x-fluentui-person-edit-24-o
-                                                        class="w-8 h-8 hover:cursor-pointer text-blue-500"
+                                                    <x-far-edit
+                                                        class="w-6 h-6 hover:cursor-pointer text-blue-500"
                                                         alt="Edit user"
                                                     />
                                                 </a>
@@ -120,8 +120,8 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit">
-                                                            <x-antdesign-user-delete-o
-                                                                class="w-8 h-8 hover:cursor-pointer text-red-500"
+                                                            <x-ri-delete-bin-6-line
+                                                                class="w-6 h-6 hover:cursor-pointer text-red-500"
                                                                 alt="Delete user"
                                                             />
                                                         </button>
