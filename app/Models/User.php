@@ -51,6 +51,11 @@ class User extends Authenticatable
         return $this->hasMany(HopQuery::class);
     }
 
+    public function isUserCurrentlyAuthenticated(): bool
+    {
+        return $this->id === auth()->id();
+    }
+
     protected function casts(): array
     {
         return [
