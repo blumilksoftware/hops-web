@@ -10,6 +10,9 @@
                     @csrf
                     @method('PUT')
                     @include('admin.hops._form')
+                    <script>
+                        console.log(@js($hop));
+                    </script>
 
                     <div class="flex items-center gap-4 pt-4 border-t border-hops-warm">
                         <x-primary-button>{{ __('Save Changes') }}</x-primary-button>

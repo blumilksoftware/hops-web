@@ -10,25 +10,19 @@
                         <form method="GET" action="{{ route('admin.hops.index') }}" class="flex items-center gap-2">
                             <div class="relative flex items-center" x-data="{ search: '{{ request('search') }}' }">
                                 <x-text-input x-ref="searchInput" name="search" x-model="search"
-                                              placeholder="{{ __('Search hops...') }}" class="pr-8"
-                                />
+                                    placeholder="{{ __('Search hops...') }}" class="pr-8" />
                                 <button type="button" x-show="search" @click="search = ''; $refs.searchInput.focus()"
-                                        style="display: none;"
-                                        class="absolute right-2 text-gray-400 hover:text-gray-600"
-                                >
+                                    style="display: none;" class="absolute right-2 text-gray-400 hover:text-gray-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                         viewBox="0 0 24 24" stroke="currentColor"
-                                    >
+                                        viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M6 18L18 6M6 6l12 12"
-                                        />
+                                            d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
                             </div>
                             <x-primary-button>{{ __('Search') }}</x-primary-button>
                             <a href="{{ route('admin.hops.create') }}"
-                               class="inline-flex items-center px-4 py-2 bg-hops-accent border border-hops-accent rounded-md font-semibold text-xs text-hops-darkest uppercase tracking-widest shadow-sm hover:bg-hops-warm hover:border-hops-warm focus:outline-none focus:ring-2 focus:ring-hops-accent focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150"
-                            >
+                                class="inline-flex items-center px-4 py-2 bg-hops-accent border border-hops-accent rounded-md font-semibold text-xs text-hops-darkest uppercase tracking-widest shadow-sm hover:bg-hops-warm hover:border-hops-warm focus:outline-none focus:ring-2 focus:ring-hops-accent focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
                                 {{ __('Create') }}
                             </a>
                         </form>
@@ -37,37 +31,42 @@
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-hops-warm">
                             <thead class="bg-hops-light">
-                            <tr>
-                                <th class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
-                                    {{ __('Name') }}
-                                </th>
-                                <th class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
-                                    {{ __('Slug') }}
-                                </th>
-                                <th class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
-                                    {{ __('Alt Name') }}
-                                </th>
-                                <th class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
-                                    {{ __('Country') }}
-                                </th>
-                                <th class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
-                                    {{ __('Created At') }}
-                                </th>
-                                <th class="px-6 py-6 text-right text-xs font-semibold text-hops-darkest uppercase tracking-wider">
-                                    {{ __('Actions') }}
-                                </th>
-                            </tr>
+                                <tr>
+                                    <th
+                                        class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
+                                        {{ __('Name') }}
+                                    </th>
+                                    <th
+                                        class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
+                                        {{ __('Slug') }}
+                                    </th>
+                                    <th
+                                        class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
+                                        {{ __('Alt Name') }}
+                                    </th>
+                                    <th
+                                        class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
+                                        {{ __('Country') }}
+                                    </th>
+                                    <th
+                                        class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
+                                        {{ __('Created At') }}
+                                    </th>
+                                    <th
+                                        class="px-6 py-6 text-right text-xs font-semibold text-hops-darkest uppercase tracking-wider">
+                                        {{ __('Actions') }}
+                                    </th>
+                                </tr>
                             </thead>
                             <tbody class="bg-hops-light divide-y divide-hops-warm">
-                            @if($hops->isEmpty())
-                                <tr>
-                                    <td colspan="6"
-                                        class="px-6 py-4 whitespace-nowrap text-center text-sm text-hops-mid"
-                                    >
-                                        {{ __('No hops found.') }}
-                                    </td>
-                                </tr>
-                            @else
+                                @empty($hops->count())
+                                    <tr>
+                                        <td colspan="6"
+                                            class="px-6 py-4 whitespace-nowrap text-center text-sm text-hops-mid">
+                                            {{ __('No hops found.') }}
+                                        </td>
+                                    </tr>
+                                @endempty
                                 @foreach ($hops as $hop)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap font-medium text-hops-dark">
@@ -88,30 +87,25 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex justify-end gap-4">
                                                 <a href="{{ route('admin.hops.edit', $hop) }}">
-                                                    <x-far-edit
-                                                        class="w-6 h-6 hover:cursor-pointer text-blue-500"
-                                                        alt="{{ __('Edit hop') }}"
-                                                    />
+                                                    <x-far-edit class="w-6 h-6 hover:cursor-pointer text-blue-500"
+                                                        alt="{{ __('Edit hop') }}" />
                                                 </a>
 
-                                                <form action="{{ route('admin.hops.destroy', $hop) }}"
-                                                      method="POST" class="inline-block"
-                                                      onsubmit="return confirm('{{ __('Are you sure you want to delete') }} {{ $hop->name }}?')"
-                                                >
+                                                <form action="{{ route('admin.hops.destroy', $hop) }}" method="POST"
+                                                    class="inline-block"
+                                                    onsubmit="return confirm('{{ __('Are you sure you want to delete') }} {{ $hop->name }}?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit">
                                                         <x-ri-delete-bin-6-line
                                                             class="w-6 h-6 hover:cursor-pointer text-red-500"
-                                                            alt="{{ __('Delete hop') }}"
-                                                        />
+                                                            alt="{{ __('Delete hop') }}" />
                                                     </button>
                                                 </form>
                                             </div>
                                         </td>
                                     </tr>
                                 @endforeach
-                            @endif
                             </tbody>
                         </table>
                     </div>

@@ -24,7 +24,7 @@ class CreateHopRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => ["required", "string", "max:255"],
+            "name" => ["required", "string", "max:255", "unique:hops,name"],
             "slug" => ["required", "string", "max:255", "unique:hops,slug"],
             "alt_name" => ["nullable", "string", "max:255"],
             "country" => ["nullable", "string", "max:255"],
