@@ -29,7 +29,7 @@ class HopFixture
   aromaDescription: ["lime", "black currant"],
   agronomic: {
     yield: { min: 1600, max: 2200 },
-    maturity: "early to mid early"
+    maturity: "early"
   },
   ingredients: {
     alphas: { min: 4.5, max: 7.0 },
