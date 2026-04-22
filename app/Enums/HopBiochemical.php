@@ -21,11 +21,11 @@ enum HopBiochemical: string
 
     public function label(): string
     {
-        return match($this) {
+        return match ($this) {
             self::AlphaAcid => "Alpha Acid",
             self::BetaAcid => "Beta Acid",
             self::TotalOil => "Total Oil",
-            default => ucfirst($this->value),
+            default => $this->value,
         };
     }
 }

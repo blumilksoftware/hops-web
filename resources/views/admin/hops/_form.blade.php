@@ -41,7 +41,7 @@
         @foreach (HopsWeb\Enums\HopBiochemical::cases() as $case)
             @php $field = $case->value; @endphp
             <div class="bg-hops-light border border-hops-warm rounded-md p-3">
-                <p class="text-xs font-semibold text-hops-darkest uppercase tracking-wider mb-2">{{ $case->label() }}
+                <p class="text-xs font-semibold text-hops-darkest  tracking-wider mb-2">{{ ucfirst($case->label()) }}
                 </p>
                 <div class="flex gap-2">
                     <div class="flex-1">
