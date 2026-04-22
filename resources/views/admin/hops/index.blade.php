@@ -12,12 +12,9 @@
                                 <x-text-input x-ref="searchInput" name="search" x-model="search"
                                     placeholder="{{ __('Search hops...') }}" class="pr-8" />
                                 <button type="button" x-show="search" @click="search = ''; $refs.searchInput.focus()"
-                                    style="display: none;" class="absolute right-2 text-gray-400 hover:text-gray-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
+                                    style="display: none;"
+                                    class="absolute right-2 hover:cursor-pointer text-gray-400 hover:text-gray-600">
+                                    <x-eva-close class="w-6 h-6" />
                                 </button>
                             </div>
                             <x-primary-button>{{ __('Search') }}</x-primary-button>
