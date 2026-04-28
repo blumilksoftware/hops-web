@@ -11,25 +11,30 @@ class HopPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->is_admin;
+        return $this->manage($user);
     }
 
     public function view(User $user, Hop $model): bool
     {
-        return $user->is_admin;
+        return $this->manage($user);
     }
 
     public function store(User $user): bool
     {
-        return $user->is_admin;
+        return $this->manage($user);
     }
 
     public function update(User $user, Hop $model): bool
     {
-        return $user->is_admin;
+        return $this->manage($user);
     }
 
     public function delete(User $user, Hop $model): bool
+    {
+        return $this->manage($user);
+    }
+
+    public function manage(User $user): bool
     {
         return $user->is_admin;
     }

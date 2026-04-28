@@ -28,7 +28,7 @@
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-hops-warm">
                             <thead class="bg-hops-light">
-                                <tr>
+                                <tr class="text-nowrap">
                                     <th
                                         class="px-6 py-6 text-left text-xs font-semibold text-hops-darkest uppercase tracking-wider">
                                         {{ __('Name') }}

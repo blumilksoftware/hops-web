@@ -48,16 +48,8 @@ class HopController extends Controller
     {
         $this->authorize("store", Hop::class);
 
-        $data = $request->validated();
-
         $hop = new Hop();
-        $hop->fill($this->extractBasicFields($data));
-
-        foreach (Hop::RANGE_FIELDS as $field) {
-            $hop->setAttribute("{$field}_min", $data["{$field}_min"] ?? null);
-            $hop->setAttribute("{$field}_max", $data["{$field}_max"] ?? null);
-        }
-
+        $this->fillHop($hop, $request->validated());
         $hop->save();
 
         return redirect()->route("admin.hops.index");
@@ -72,15 +64,7 @@ class HopController extends Controller
 
     public function update(UpdateHopRequest $request, Hop $hop): RedirectResponse
     {
-        $data = $request->validated();
-
-        $hop->fill($this->extractBasicFields($data));
-
-        foreach (Hop::RANGE_FIELDS as $field) {
-            $hop->setAttribute("{$field}_min", $data["{$field}_min"] ?? null);
-            $hop->setAttribute("{$field}_max", $data["{$field}_max"] ?? null);
-        }
-
+        $this->fillHop($hop, $request->validated());
         $hop->save();
 
         return redirect()->route("admin.hops.index");
@@ -95,7 +79,17 @@ class HopController extends Controller
         return redirect()->route("admin.hops.index");
     }
 
-    private function extractBasicFields(array $data): array
+    private function fillHop(Hop $hop, array $data): void
+    {
+        $hop->fill(array_diff_key($data, array_flip($this->getRangeKeys())));
+
+        foreach (Hop::RANGE_FIELDS as $field) {
+            $hop->setAttribute("{$field}_min", $data["{$field}_min"] ?? null);
+            $hop->setAttribute("{$field}_max", $data["{$field}_max"] ?? null);
+        }
+    }
+
+    private function getRangeKeys(): array
     {
         $rangeKeys = [];
 
@@ -104,6 +98,6 @@ class HopController extends Controller
             $rangeKeys[] = "{$field}_max";
         }
 
-        return array_diff_key($data, array_flip($rangeKeys));
+        return $rangeKeys;
     }
 }
