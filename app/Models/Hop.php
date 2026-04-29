@@ -129,34 +129,28 @@ class Hop extends Model
     public function scopeFilter($query, array $filters)
     {
         foreach (self::RANGE_FIELDS as $field) {
-            if (isset($filters[$field . "_min"])) {
-                $query->where($field . "_min", ">=", $filters[$field . "_min"]);
-            }
-
-            if (isset($filters[$field . "_max"])) {
-                $query->where($field . "_max", "<=", $filters[$field . "_max"]);
-            }
+            $query->filterRange(
+                $field,
+                $filters[$field . "_min"] ?? null,
+                $filters[$field . "_max"] ?? null,
+            );
         }
 
         foreach (AromaProfile::cases() as $profile) {
             $flag = $profile->value;
 
-            if (isset($filters[$flag]) && $filters[$flag] === "1") {
+            if (($filters[$flag] ?? null) === "1") {
                 $query->where($flag, 1);
             }
         }
 
-        if (isset($filters["bitterness"]) && $filters["bitterness"] !== "all") {
-            $query->where("bitterness", $filters["bitterness"]);
-        }
+        $query->filterEnum("bitterness", $filters["bitterness"] ?? null);
+        $query->filterEnum("aromaticity", $filters["aromaticity"] ?? null);
 
-        if (isset($filters["aromaticity"]) && $filters["aromaticity"] !== "all") {
-            $query->where("aromaticity", $filters["aromaticity"]);
-        }
-
-        if (isset($filters["countries"]) && is_array($filters["countries"]) && count($filters["countries"]) > 0) {
-            $query->whereIn("country", $filters["countries"]);
-        }
+        $query->filterArray(
+            "country",
+            $filters["countries"] ?? [],
+        );
 
         return $query;
     }
@@ -167,5 +161,30 @@ class Hop extends Model
             AromaProfile::cases(),
             fn(AromaProfile $profile) => (bool)$this->{$profile->value},
         );
+    }
+
+    public function scopeFilterRange($query, $column, $min, $max): void
+    {
+        if ($min !== null) {
+            $query->where($column . "_min", ">=", $min);
+        }
+
+        if ($max !== null) {
+            $query->where($column . "_max", "<=", $max);
+        }
+    }
+
+    public function scopeFilterArray($query, $column, $values): void
+    {
+        if (is_array($values) && count($values) > 0) {
+            $query->whereIn($column, $values);
+        }
+    }
+
+    public function scopeFilterEnum($query, $column, $value): void
+    {
+        if ($value !== null && $value !== "all") {
+            $query->where($column, $value);
+        }
     }
 }
