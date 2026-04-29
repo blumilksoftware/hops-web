@@ -102,16 +102,11 @@
                         {{ __('Biochemical Profile') }}</h3>
 
                     <div class="space-y-6">
-                        @foreach ([
-        'alpha_acid' => __('Alpha Acid (%)'),
-        'beta_acid' => __('Beta Acid (%)'),
-        'cohumulone' => __('Cohumulone (%)'),
-        'total_oil' => __('Total Oil (ml/100g)'),
-        'polyphenol' => __('Polyphenols (%)'),
-        'xanthohumol' => __('Xanthohumol (%)'),
-        'farnesene' => __('Farnesene (%)'),
-        'linalool' => __('Linalool (%)'),
-    ] as $field => $label)
+                        @foreach (\HopsWeb\Enums\BiochemicalProperty::cases() as $property)
+                            @php
+                                $field = $property->value;
+                                $label = $property->label();
+                            @endphp
                             <div>
                                 <div class="flex justify-between text-sm mb-2">
                                     <span class="text-gray-400 font-medium">{{ $label }}</span>
