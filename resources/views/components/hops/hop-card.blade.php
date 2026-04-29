@@ -29,7 +29,7 @@
     <div class="flex flex-col ">
         <div class="flex flex-wrap gap-1 mt-3">
             @foreach ($hop->getActiveAromas() as $index => $aroma)
-                <span class="ml-1 mr-1 text-xs font-semibold py-0.5 px-1 ">
+                <span class="ml-1 mr-1 text-xs font-semibold border border-hops-mid rounded-md py-0.5 px-1 ">
                     {{ __($aroma->label()) }}
                 </span>
             @endforeach
