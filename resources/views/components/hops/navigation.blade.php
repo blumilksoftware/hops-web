@@ -16,11 +16,6 @@
                 <a href="#" class="text-gray-500 hover:text-hops-ink text-sm transition">
                     {{ __('Laboratory') }}
                 </a>
-                @if (Auth::user() && Auth::user()->is_admin)
-                    <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.*') ? 'text-hops-mid font-semibold' : 'text-gray-500 hover:text-hops-ink' }} text-sm transition">
-                        {{ __('Admin Panel') }}
-                    </a>
-                @endif
             </div>
 
             <div class="flex items-center space-x-4">

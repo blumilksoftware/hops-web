@@ -13,8 +13,8 @@
             @if (Route::has('login'))
                 <nav class="flex space-x-4">
                     @auth
-                        <a href="{{ url('/dashboard') }}"
-                            class="text-green-100 hover:text-white transition">{{ __('Dashboard') }}</a>
+                        <a href="{{ url('/') }}"
+                            class="text-green-100 hover:text-white transition">{{ __('Home') }}</a>
                     @else
                         <a href="{{ route('login') }}"
                             class="text-green-100 hover:text-white transition">{{ __('Log in') }}</a>
