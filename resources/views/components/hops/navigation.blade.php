@@ -13,10 +13,6 @@
                     class="{{ request()->is('/') ? 'text-hops-mid font-semibold' : 'text-gray-500 hover:text-hops-ink' }} text-sm transition">
                     {{ __('Home') }}
                 </a>
-                <a href="{{ route('hops.index') }}"
-                    class="{{ request()->routeIs('hops.index') ? 'text-hops-mid font-semibold' : 'text-gray-500 hover:text-hops-ink' }} text-sm transition">
-                    {{ __('Search') }}
-                </a>
                 <a href="#" class="text-gray-500 hover:text-hops-ink text-sm transition">
                     {{ __('Laboratory') }}
                 </a>
