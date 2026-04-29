@@ -130,11 +130,11 @@ class Hop extends Model
     {
         foreach (self::RANGE_FIELDS as $field) {
             if (isset($filters[$field . "_min"])) {
-                $query->where($field . "_max", ">=", $filters[$field . "_min"]);
+                $query->where($field . "_min", ">=", $filters[$field . "_min"]);
             }
 
             if (isset($filters[$field . "_max"])) {
-                $query->where($field . "_min", "<=", $filters[$field . "_max"]);
+                $query->where($field . "_max", "<=", $filters[$field . "_max"]);
             }
         }
 

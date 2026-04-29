@@ -34,24 +34,19 @@
                 <h3 class="text-sm font-semibold text-hops-ink uppercase tracking-wider mb-4">
                     {{ __('Biochemical Properties') }}</h3>
                 <div class="space-y-6">
-                    @foreach ([
-        'alpha_acid' => __('Alpha Acid (%)'),
-        'beta_acid' => __('Beta Acid (%)'),
-        'cohumulone' => __('Cohumulone (%)'),
-        'total_oil' => __('Total Oil (ml/100g)'),
-    ] as $key => $label)
+                    @foreach (\HopsWeb\Enums\BiochemicalProperty::cases() as $property)
                         <div class="space-y-2" x-data="{
-                            min: '{{ $filters[$key . '_min'] ?? '' }}',
-                            max: '{{ $filters[$key . '_max'] ?? '' }}'
+                            min: '{{ $filters[$property->value . '_min'] ?? '' }}',
+                            max: '{{ $filters[$property->value . '_max'] ?? '' }}'
                         }">
-                            <span class="text-xs font-medium text-gray-500 uppercase">{{ $label }}</span>
+                            <span class="text-xs font-medium text-gray-500 uppercase">{{ $property->label() }}</span>
                             <div class="flex items-center space-x-2">
-                                <input type="number" name="{{ $key }}_min" x-model="min"
+                                <input type="number" name="{{ $property->value }}_min" x-model="min"
                                     placeholder="{{ __('Min') }}" step="0.1" min="0"
                                     :max="max || 100"
                                     class="w-full text-xs rounded-md border-gray-300 focus:border-hops-mid focus:ring-hops-mid">
                                 <span class="text-gray-400">-</span>
-                                <input type="number" name="{{ $key }}_max" x-model="max"
+                                <input type="number" name="{{ $property->value }}_max" x-model="max"
                                     placeholder="{{ __('Max') }}" step="0.1" :min="min || 0"
                                     max="100"
                                     class="w-full text-xs rounded-md border-gray-300 focus:border-hops-mid focus:ring-hops-mid">
