@@ -101,32 +101,25 @@
                     <h3 class="text-xl font-bold text-hops-ink mb-8 border-b border-hops-light pb-4">
                         {{ __('Biochemical Profile') }}</h3>
 
-                    <div class="space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
                         @foreach (\HopsWeb\Enums\BiochemicalProperty::cases() as $property)
                             @php
                                 $field = $property->value;
                                 $label = $property->label();
                             @endphp
-                            <div>
-                                <div class="flex justify-between text-sm mb-2">
-                                    <span class="text-gray-400 font-medium">{{ $label }}</span>
-                                    <span class="text-hops-ink font-bold">
-                                        @if ($hop->{$field})
-                                            @if ($hop->{$field}->min === $hop->{$field}->max)
-                                                {{ $hop->{$field}->min }}
-                                            @else
-                                                {{ $hop->{$field}->min }} - {{ $hop->{$field}->max }}
-                                            @endif
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 flex flex-col justify-center text-center">
+                                <span class="text-xs font-semibold text-gray-400 uppercase mb-1">{{ $label }}</span>
+                                <span class="text-lg font-bold text-hops-ink">
+                                    @if ($hop->{$field})
+                                        @if ($hop->{$field}->min === $hop->{$field}->max)
+                                            {{ $hop->{$field}->min }}
                                         @else
-                                            {{ __('N/A') }}
+                                            {{ $hop->{$field}->min }} - {{ $hop->{$field}->max }}
                                         @endif
-                                    </span>
-                                </div>
-                                <div
-                                    class="relative w-full h-2 bg-hops-light rounded-full overflow-hidden border border-gray-100">
-                                    <div class="absolute top-0 bottom-0 bg-hops-accent" style="left: 0%; right: 0%;">
-                                    </div>
-                                </div>
+                                    @else
+                                        {{ __('N/A') }}
+                                    @endif
+                                </span>
                             </div>
                         @endforeach
                     </div>
