@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace HopsWeb\Actions;
 
+use HopsWeb\Enums\Aromaticity;
+use HopsWeb\Enums\HopDescriptor;
+use HopsWeb\Enums\HopLineage;
+use HopsWeb\Enums\HopMaturity;
+use HopsWeb\Enums\Resistance;
 use HopsWeb\Models\Hop;
 use HopsWeb\ValueObjects\RangeOrNumber;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class UpsertHop
@@ -34,10 +40,10 @@ class UpsertHop
             "country" => ["nullable", "string", "max:255"],
             "description" => ["nullable", "string"],
             "descriptors" => ["nullable", "array"],
-            "descriptors.*" => ["string"],
+            "descriptors.*" => ["string", Rule::enum(HopDescriptor::class)],
             "lineage" => ["nullable", "array"],
-            "lineage.*" => ["string"],
-            "thiols" => ["nullable", "string", "in:low,medium,high"],
+            "lineage.*" => ["string", Rule::enum(HopLineage::class)],
+            "thiols" => ["nullable", "string", Rule::enum(Aromaticity::class)],
             "aroma_citrusy" => ["nullable", "integer", "between:0,5"],
             "aroma_fruity" => ["nullable", "integer", "between:0,5"],
             "aroma_floral" => ["nullable", "integer", "between:0,5"],
@@ -55,11 +61,11 @@ class UpsertHop
             "substitutes.dryhopping.*" => ["string"],
             "yield_min" => ["nullable", "integer", "min:0"],
             "yield_max" => ["nullable", "integer", "min:0"],
-            "maturity" => ["nullable", "string", "max:255"],
-            "wilt_disease" => ["nullable", "string", "max:255"],
-            "downy_mildew" => ["nullable", "string", "max:255"],
-            "powdery_mildew" => ["nullable", "string", "max:255"],
-            "aphid" => ["nullable", "string", "max:255"],
+            "maturity" => ["nullable", "string", Rule::enum(HopMaturity::class)],
+            "wilt_disease" => ["nullable", "string", Rule::enum(Resistance::class)],
+            "downy_mildew" => ["nullable", "string", Rule::enum(Resistance::class)],
+            "powdery_mildew" => ["nullable", "string", Rule::enum(Resistance::class)],
+            "aphid" => ["nullable", "string", Rule::enum(Resistance::class)],
         ]);
 
         if ($validator->fails()) {

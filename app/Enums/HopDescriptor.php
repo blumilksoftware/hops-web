@@ -16,4 +16,6 @@ enum HopDescriptor: string
     case Spicy = "spicy";
     case Floral = "floral";
     case Resinous = "resinous";
+    case Sugarlike = "sugarlike";
+    case Misc = "misc";
 }

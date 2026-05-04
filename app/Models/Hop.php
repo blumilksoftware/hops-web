@@ -122,8 +122,14 @@ class Hop extends Model
         "lineage" => "array",
         "aroma_descriptors" => "array",
         "substitutes" => "array",
-        "bitterness" => Bitterness::class,
+        "thiols" => Aromaticity::class,
         "aromaticity" => Aromaticity::class,
+        "bitterness" => Bitterness::class,
+        "maturity" => HopMaturity::class,
+        "wilt_disease" => Resistance::class,
+        "downy_mildew" => Resistance::class,
+        "powdery_mildew" => Resistance::class,
+        "aphid" => Resistance::class,
     ];
 
     public function scopeFilter($query, array $filters)
