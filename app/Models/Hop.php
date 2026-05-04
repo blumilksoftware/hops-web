@@ -13,6 +13,7 @@ use HopsWeb\Enums\HopLineage;
 use HopsWeb\Enums\HopMaturity;
 use HopsWeb\Enums\Resistance;
 use HopsWeb\ValueObjects\RangeOrNumber;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -132,7 +133,7 @@ class Hop extends Model
         "aphid" => Resistance::class,
     ];
 
-    public function scopeFilter($query, array $filters)
+    public function scopeFilter(Builder $query, array $filters): Builder
     {
         foreach (self::RANGE_FIELDS as $field) {
             $query->filterRange(
@@ -165,11 +166,11 @@ class Hop extends Model
     {
         return array_filter(
             AromaProfile::cases(),
-            fn(AromaProfile $profile) => (bool)$this->{$profile->value},
+            fn(AromaProfile $profile): bool => (bool)$this->{$profile->value},
         );
     }
 
-    public function scopeFilterRange($query, $column, $min, $max): void
+    public function scopeFilterRange(Builder $query, string $column, ?float $min, ?float $max): void
     {
         if ($min !== null) {
             $query->where($column . "_min", ">=", $min);
@@ -180,14 +181,14 @@ class Hop extends Model
         }
     }
 
-    public function scopeFilterArray($query, $column, $values): void
+    public function scopeFilterArray(Builder $query, string $column, array $values): void
     {
-        if (is_array($values) && count($values) > 0) {
+        if (count($values) > 0) {
             $query->whereIn($column, $values);
         }
     }
 
-    public function scopeFilterEnum($query, $column, $value): void
+    public function scopeFilterEnum(Builder $query, string $column, ?string $value): void
     {
         if ($value !== null && $value !== "all") {
             $query->where($column, $value);
