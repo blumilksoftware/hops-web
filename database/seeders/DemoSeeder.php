@@ -19,6 +19,12 @@ class DemoSeeder extends Seeder
         User::factory(["name" => "Admin", "email" => "admin@example.com", "password" => "password"])->admin()->create();
         User::factory(["name" => "Team Member", "email" => "member@example.com", "password" => "password"])->teamMember()->create();
 
-        HopQuery::factory(10)->for(User::first())->create();
+        HopQuery::factory(10)->withFullQuery()->for(User::first())->create();
+
+        $users = User::inRandomOrder()->take(5)->get();
+
+        foreach ($users as $user) {
+            HopQuery::factory()->count(rand(2, 5))->withFullQuery()->for($user)->create();
+        }
     }
 }

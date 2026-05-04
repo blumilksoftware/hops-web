@@ -14,6 +14,9 @@
                 <a href="{{ route('admin.hops.index') }}" class="{{ request()->routeIs('admin.hops.*') ? 'border-hops-accent text-hops-dark' : 'border-transparent text-hops-mid hover:text-hops-warm hover:border-hops-warm' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                     {{ __('Hops') }}
                 </a>
+                <a href="{{ route('admin.hop-queries.index') }}" class="{{ request()->routeIs('admin.hop-queries.*') ? 'border-hops-accent text-hops-dark' : 'border-transparent text-hops-mid hover:text-hops-warm hover:border-hops-warm' }} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                    {{ __('Hop Queries') }}
+                </a>
             </nav>
         </div>
     </div>
