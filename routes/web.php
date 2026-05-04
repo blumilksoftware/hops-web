@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use HopsWeb\Http\Controllers\Admin\HopController as AdminHopController;
+use HopsWeb\Http\Controllers\Admin\HopQueryController;
 use HopsWeb\Http\Controllers\Admin\UserController;
 use HopsWeb\Http\Controllers\HopController as PublicHopController;
 use HopsWeb\Http\Controllers\ProfileController;
@@ -23,12 +24,13 @@ Route::middleware(["auth"])->group(function (): void {
         Route::get("/users/create", [UserController::class, "create"])->name("users.create");
         Route::post("/users", [UserController::class, "store"])->name("users.store");
         Route::delete("/users/{user}", [UserController::class, "destroy"])->name("users.destroy");
-
         Route::get("/hops", [AdminHopController::class, "index"])->name("hops.index");
         Route::get("/hops/{hop}/edit", [AdminHopController::class, "edit"])->name("hops.edit");
         Route::put("/hops/{hop}", [AdminHopController::class, "update"])->name("hops.update");
         Route::get("/hops/create", [AdminHopController::class, "create"])->name("hops.create");
         Route::post("/hops", [AdminHopController::class, "store"])->name("hops.store");
         Route::delete("/hops/{hop}", [AdminHopController::class, "destroy"])->name("hops.destroy");
+        Route::get("/hop-queries", [HopQueryController::class, "index"])->name("hop-queries.index");
+        Route::get("/hop-queries/{hopQuery}", [HopQueryController::class, "show"])->name("hop-queries.show");
     });
 });
