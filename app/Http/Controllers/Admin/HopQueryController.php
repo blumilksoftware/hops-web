@@ -6,6 +6,7 @@ namespace HopsWeb\Http\Controllers\Admin;
 
 use HopsWeb\Http\Controllers\Controller;
 use HopsWeb\Models\HopQuery;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -18,13 +19,16 @@ class HopQueryController extends Controller
     {
         $this->authorize("viewAny", HopQuery::class);
 
-        $query = HopQuery::with("user");
+        $query = HopQuery::query()->with("user");
 
         if ($request->filled("user")) {
             $userSearch = $request->input("user");
-            $query->whereHas("user", function ($q) use ($userSearch): void {
-                $q->where("name", "like", "%" . $userSearch . "%")
-                    ->orWhere("email", "like", "%" . $userSearch . "%");
+            $query->whereHas("user", function (Builder $query) use ($userSearch): void {
+                $query->where("name", "like", "%" . $userSearch . "%")->orWhere(
+                    "email",
+                    "like",
+                    "%" . $userSearch . "%",
+                );
             });
         }
 

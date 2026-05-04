@@ -18,17 +18,33 @@
                                 </button>
                             </div>
                             
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2" x-data="{ dateFrom: '{{ request('date_from') }}' }">
                                 <span class="text-sm text-hops-mid">{{ __('From:') }}</span>
-                                <x-text-input type="date" name="date_from" value="{{ request('date_from') }}" onchange="this.form.submit()" />
+                                <div class="relative flex items-center">
+                                    <x-text-input type="date" name="date_from" x-model="dateFrom" class="pr-8" />
+                                    <button type="button" x-show="dateFrom" @click="dateFrom = ''"
+                                        style="display: none;"
+                                        class="absolute right-2 hover:cursor-pointer text-gray-400 hover:text-gray-600">
+                                        <x-eva-close class="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
                             
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2" x-data="{ dateTo: '{{ request('date_to') }}' }">
                                 <span class="text-sm text-hops-mid">{{ __('To:') }}</span>
-                                <x-text-input type="date" name="date_to" value="{{ request('date_to') }}" onchange="this.form.submit()" />
+                                <div class="relative flex items-center">
+                                    <x-text-input type="date" name="date_to" x-model="dateTo" class="pr-8" />
+                                    <button type="button" x-show="dateTo" @click="dateTo = ''"
+                                        style="display: none;"
+                                        class="absolute right-2 hover:cursor-pointer text-gray-400 hover:text-gray-600">
+                                        <x-eva-close class="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
 
-                            
+                            <x-primary-button type="submit">
+                                {{ __('Search') }}
+                            </x-primary-button>
                         </form>
                     </div>
 
@@ -70,7 +86,7 @@
                                             <span class="text-xs text-hops-mid font-normal">{{ $query->user->email }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-hops-mid">
-                                            {{ $query->created_at?->format('d/m/Y H:i') ?? '—' }}
+                                            {{ $query->created_at?->format('Y-m-d H:i') ?? '—' }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex justify-end gap-4">

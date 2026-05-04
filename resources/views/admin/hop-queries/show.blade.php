@@ -19,7 +19,7 @@
                         <strong class="text-hops-darkest">{{ __('User:') }}</strong> {{ $hopQuery->user->name }} ({{ $hopQuery->user->email }})
                     </div>
                     <div>
-                        <strong class="text-hops-darkest">{{ __('Date:') }}</strong> {{ $hopQuery->created_at->format('d/m/Y H:i:s') }}
+                        <strong class="text-hops-darkest">{{ __('Date:') }}</strong> {{ $hopQuery->created_at->format('Y-m-d H:i:s') }}
                     </div>
                 </div>
             </div>
