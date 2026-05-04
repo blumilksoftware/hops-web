@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use HopsWeb\Http\Controllers\Admin\HopController;
+use HopsWeb\Http\Controllers\Admin\HopQueryController;
 use HopsWeb\Http\Controllers\Admin\UserController;
 use HopsWeb\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -30,5 +31,7 @@ Route::middleware(["auth"])->group(function (): void {
         Route::get("/hops/create", [HopController::class, "create"])->name("hops.create");
         Route::post("/hops", [HopController::class, "store"])->name("hops.store");
         Route::delete("/hops/{hop}", [HopController::class, "destroy"])->name("hops.destroy");
+        Route::get("/hop-queries", [HopQueryController::class, "index"])->name("hop-queries.index");
+        Route::get("/hop-queries/{hopQuery}", [HopQueryController::class, "show"])->name("hop-queries.show");
     });
 });
