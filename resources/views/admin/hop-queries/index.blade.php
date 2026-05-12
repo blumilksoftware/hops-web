@@ -91,7 +91,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex justify-end gap-4">
                                                 <a href="{{ route('admin.hop-queries.show', $query) }}">
-                                                    <x-far-eye class="w-6 h-6 hover:cursor-pointer text-blue-500"
+                                                    <x-ri-eye-line class="w-6 h-6 hover:cursor-pointer text-blue-500"
                                                         alt="{{ __('View details') }}" />
                                                 </a>
                                             </div>

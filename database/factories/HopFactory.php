@@ -39,7 +39,7 @@ class HopFactory extends Factory
             "name" => $this->faker->unique()->word() . " Hop",
             "slug" => $this->faker->unique()->slug(),
             "alt_name" => $this->faker->optional()->word(),
-            "country" => $this->faker->countryCode(),
+            "country" => $this->faker->country(),
             "description" => $this->faker->paragraph(),
             "descriptors" => $this->faker->randomElements(HopDescriptor::values(), 2),
             "lineage" => $this->faker->optional()->randomElements(HopLineage::values(), 2),

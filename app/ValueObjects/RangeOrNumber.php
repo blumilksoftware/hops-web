@@ -24,7 +24,7 @@ class RangeOrNumber
 
     public static function fromNumber(float $value): self
     {
-        return new self(null, null, $value);
+        return new self($value, $value, $value);
     }
 
     public static function fromRange(float $min, float $max): self

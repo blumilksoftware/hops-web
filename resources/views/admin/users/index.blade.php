@@ -87,8 +87,8 @@
                                                 <div class="flex justify-end gap-4">
 
                                                     <a href="{{ route('admin.users.edit', $user) }}">
-                                                        <x-far-edit class="w-6 h-6 hover:cursor-pointer text-blue-500"
-                                                            alt="Edit user" />
+                                                    <x-ri-edit-line class="w-6 h-6 hover:cursor-pointer text-blue-500"
+                                                        alt="Edit user" />
                                                     </a>
 
                                                     @if (!$user->is_admin)

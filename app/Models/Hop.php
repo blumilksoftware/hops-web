@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HopsWeb\Models;
 
 use HopsWeb\Casts\RangeOrNumberCast;
+use HopsWeb\Enums\AromaProfile;
 use HopsWeb\Enums\Aromaticity;
 use HopsWeb\Enums\Bitterness;
 use HopsWeb\Enums\HopDescriptor;
@@ -12,6 +13,7 @@ use HopsWeb\Enums\HopLineage;
 use HopsWeb\Enums\HopMaturity;
 use HopsWeb\Enums\Resistance;
 use HopsWeb\ValueObjects\RangeOrNumber;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -130,4 +132,66 @@ class Hop extends Model
         "powdery_mildew" => Resistance::class,
         "aphid" => Resistance::class,
     ];
+
+    public function scopeFilter(Builder $query, array $filters): Builder
+    {
+        foreach (self::RANGE_FIELDS as $field) {
+            $query->filterRange(
+                $field,
+                $filters[$field . "_min"] ?? null,
+                $filters[$field . "_max"] ?? null,
+            );
+        }
+
+        foreach (AromaProfile::cases() as $profile) {
+            $flag = $profile->value;
+
+            if (($filters[$flag] ?? null) === "1") {
+                $query->where($flag, 1);
+            }
+        }
+
+        $query->filterEnum("bitterness", $filters["bitterness"] ?? null);
+        $query->filterEnum("aromaticity", $filters["aromaticity"] ?? null);
+
+        $query->filterArray(
+            "country",
+            $filters["countries"] ?? [],
+        );
+
+        return $query;
+    }
+
+    public function getActiveAromas(): array
+    {
+        return array_filter(
+            AromaProfile::cases(),
+            fn(AromaProfile $profile): bool => (bool)$this->{$profile->value},
+        );
+    }
+
+    public function scopeFilterRange(Builder $query, string $column, ?float $min, ?float $max): void
+    {
+        if ($min !== null) {
+            $query->where($column . "_min", ">=", $min);
+        }
+
+        if ($max !== null) {
+            $query->where($column . "_max", "<=", $max);
+        }
+    }
+
+    public function scopeFilterArray(Builder $query, string $column, array $values): void
+    {
+        if (count($values) > 0) {
+            $query->whereIn($column, $values);
+        }
+    }
+
+    public function scopeFilterEnum(Builder $query, string $column, ?string $value): void
+    {
+        if ($value !== null && $value !== "all") {
+            $query->where($column, $value);
+        }
+    }
 }
