@@ -6,13 +6,6 @@ namespace HopsWeb\DTO\Engine;
 
 readonly class ComparisonQueryDTO
 {
-    /**
-     * @param array{present?: array<string>, absent?: array<string>}|null $target
-     * @param array{present?: array<string>, absent?: array<string>}|null $aroma
-     * @param array{present?: array<string>, absent?: array<string>}|null $description
-     * @param array<string, mixed>|null $ingredients
-     * @param array{bitterness?: string, aromaticity?: string}|null $feeling
-     */
     public function __construct(
         public ?array $target = null,
         public ?array $aroma = null,
@@ -21,9 +14,6 @@ readonly class ComparisonQueryDTO
         public ?array $feeling = null,
     ) {}
 
-    /**
-     * @param array<string, mixed> $data
-     */
     public static function fromArray(array $data): self
     {
         return new self(
@@ -35,9 +25,6 @@ readonly class ComparisonQueryDTO
         );
     }
 
-    /**
-     * @return array<string, mixed>
-     */
     public function toArray(): array
     {
         return array_filter([
