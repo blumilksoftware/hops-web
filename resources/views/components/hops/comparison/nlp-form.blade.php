@@ -16,7 +16,8 @@
                       x-model="nlpText"
                       rows="4"
                       placeholder="{{ __('e.g., I want a hop resembling Citra, extremely citrusy and tropical but with less bitterness...') }}"
-                      class="w-full text-sm rounded-2xl border-gray-200 shadow-2xs focus:border-hops-mid focus:ring-hops-mid px-4 py-3 resize-none bg-gray-50/20"></textarea>
+                      class="w-full text-sm rounded-2xl border shadow-2xs px-4 py-3 resize-none bg-gray-50/20 {{ $errors->has('natural_language_query') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 text-red-900 placeholder-red-300' : 'border-gray-200 focus:border-hops-mid focus:ring-hops-mid' }}"></textarea>
+            <x-input-error :messages="$errors->get('natural_language_query')" class="mt-2" />
         </div>
 
         <div class="space-y-2">

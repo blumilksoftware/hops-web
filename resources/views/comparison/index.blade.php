@@ -23,17 +23,38 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="{
         activeTab: '{{ old('type', ($activeQuery && !isset($activeQuery->query['_nlp_query'])) ? 'form' : 'nlp') }}',
         nlpText: '{{ $activeQuery->query['_nlp_query'] ?? '' }}',
+        showSidebar: localStorage.getItem('showSidebar') !== 'false',
+        toggleSidebar() {
+            this.showSidebar = !this.showSidebar;
+            localStorage.setItem('showSidebar', this.showSidebar);
+        },
         suggestions: [
             '{{ __('I want a citrusy and fruity hop with high bitterness') }}',
             '{{ __('Looking for Saaz substitute with floral notes and low alpha acid') }}',
             '{{ __('High total oil hop with herbal aroma and medium bitterness') }}'
         ]
     }">
-        <div class="flex flex-col lg:flex-row gap-8 items-start">
+        <div class="flex flex-col lg:flex-row gap-8 items-start transition-all duration-300">
             
-            <x-hops.comparison.history :history="$history" :activeQuery="$activeQuery" />
+            <div x-show="showSidebar" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 -translate-x-8 max-w-0"
+                 x-transition:enter-end="opacity-100 translate-x-0 max-w-xs"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-x-0 max-w-xs"
+                 x-transition:leave-end="opacity-0 -translate-x-8 max-w-0"
+                 class="w-full lg:w-80 shrink-0">
+                <x-hops.comparison.history :history="$history" :activeQuery="$activeQuery" />
+            </div>
 
             <div class="flex-grow w-full space-y-8">
+                <div x-show="!showSidebar" x-transition class="flex items-center mb-4">
+                    <button type="button" @click="toggleSidebar()" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white hover:bg-hops-light text-hops-ink hover:text-hops-mid rounded-xl border border-hops-light shadow-xs text-xs font-bold transition cursor-pointer">
+                        <x-lucide-history class="w-4 h-4 text-hops-mid shrink-0" />
+                        {{ __('Show Query History') }}
+                        <x-lucide-chevron-right class="w-4 h-4 text-hops-mid shrink-0 ml-0.5" />
+                    </button>
+                </div>
                 
                 <div class="bg-white rounded-3xl border border-hops-light shadow-sm overflow-hidden">
                     <div class="flex border-b border-gray-100 bg-gray-50/50 p-2 gap-1">
@@ -53,16 +74,20 @@
 
                     <div class="p-6">
                         @if ($errors->any())
-                            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-2xl">
-                                <h4 class="text-xs font-bold text-red-700 uppercase tracking-wider mb-2 flex items-center gap-1">
+                            <div class="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl flex gap-3 items-start x-transition">
+                                <div class="p-1.5 bg-red-100 text-red-600 rounded-xl shrink-0">
                                     <x-eva-alert-circle class="w-4 h-4" />
-                                    {{ __('Validation Errors') }}
-                                </h4>
-                                <ul class="list-disc pl-4 space-y-1">
-                                    @foreach ($errors->all() as $error)
-                                        <li class="text-xs text-red-600 font-medium">{{ $error }}</li>
-                                    @endforeach
-                                </ul>
+                                </div>
+                                <div class="space-y-1">
+                                    <h4 class="text-xs font-bold text-red-800 uppercase tracking-wider">
+                                        {{ __('Validation Errors') }}
+                                    </h4>
+                                    <ul class="list-disc pl-4 space-y-0.5">
+                                        @foreach ($errors->all() as $error)
+                                            <li class="text-xs text-red-600 font-medium leading-relaxed">{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             </div>
                         @endif
 
@@ -82,7 +107,7 @@
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('jsonBuilder', (initialQuery) => {
+            Alpine.data('jsonBuilder', (initialQuery, validationErrors = {}) => {
                 const defaultQuery = {
                     target: { present: [], absent: [] },
                     aroma: { present: [], absent: [] },
@@ -156,6 +181,7 @@
                     query: activeQuery,
                     formInput: formInput,
                     rawJson: '{}',
+                    validationErrors: validationErrors || {},
                     
                     ingredientMeta: {
                         alphas: { label: 'Alpha Acid (%)' },
@@ -283,10 +309,19 @@
                                         this.query.ingredients[key].max = null;
                                     }
                                 }
-
                             }
                         } catch (error) {
                         }
+                    },
+
+                    hasError(key) {
+                        return !!(this.validationErrors[key] || Object.keys(this.validationErrors).some(k => k.startsWith(key + '.')));
+                    },
+                    getError(key) {
+                        if (this.validationErrors[key]) return this.validationErrors[key][0];
+                        const subKey = Object.keys(this.validationErrors).find(k => k.startsWith(key + '.'));
+                        if (subKey) return this.validationErrors[subKey][0];
+                        return null;
                     }
                 };
             });

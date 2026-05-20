@@ -2,7 +2,16 @@
     'activeQuery' => null
 ])
 
-<div x-show="activeTab === 'form'" style="display: none;" x-data="jsonBuilder({{ json_encode($activeQuery ? $activeQuery->query : null) }})">
+@php
+    $initialQuery = null;
+    if (old('query_json')) {
+        $initialQuery = json_decode(old('query_json'), true);
+    } elseif ($activeQuery) {
+        $initialQuery = $activeQuery->query;
+    }
+@endphp
+
+<div x-show="activeTab === 'form'" style="display: none;" x-data="jsonBuilder({{ json_encode($initialQuery) }}, {{ json_encode($errors->toArray()) }})">
     <form action="{{ route('comparison.store') }}" method="POST" class="space-y-6">
         @csrf
         <input type="hidden" name="type" value="form">
@@ -25,7 +34,11 @@
                                    placeholder="e.g., Citra, Mosaic"
                                    x-model="formInput.target_present"
                                    @input="updateTarget()"
-                                   class="w-full text-xs rounded-xl border-gray-200 focus:border-hops-mid focus:ring-hops-mid px-3 py-2">
+                                   :class="hasError('target.present') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-hops-mid focus:ring-hops-mid'"
+                                   class="w-full text-xs rounded-xl border px-3 py-2">
+                            <template x-if="hasError('target.present')">
+                                <span class="text-[10px] text-red-600 font-semibold mt-1 block" x-text="getError('target.present')"></span>
+                            </template>
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">
@@ -35,7 +48,11 @@
                                    placeholder="e.g., Cascade"
                                    x-model="formInput.target_absent"
                                    @input="updateTarget()"
-                                   class="w-full text-xs rounded-xl border-gray-200 focus:border-hops-mid focus:ring-hops-mid px-3 py-2">
+                                   :class="hasError('target.absent') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-hops-mid focus:ring-hops-mid'"
+                                   class="w-full text-xs rounded-xl border px-3 py-2">
+                            <template x-if="hasError('target.absent')">
+                                <span class="text-[10px] text-red-600 font-semibold mt-1 block" x-text="getError('target.absent')"></span>
+                            </template>
                         </div>
                     </div>
 
@@ -48,7 +65,11 @@
                                    placeholder="e.g., tropical, juice"
                                    x-model="formInput.description_present"
                                    @input="updateDescription()"
-                                   class="w-full text-xs rounded-xl border-gray-200 focus:border-hops-mid focus:ring-hops-mid px-3 py-2">
+                                   :class="hasError('description.present') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-hops-mid focus:ring-hops-mid'"
+                                   class="w-full text-xs rounded-xl border px-3 py-2">
+                            <template x-if="hasError('description.present')">
+                                <span class="text-[10px] text-red-600 font-semibold mt-1 block" x-text="getError('description.present')"></span>
+                            </template>
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">
@@ -58,7 +79,11 @@
                                    placeholder="e.g., piney, garlic"
                                    x-model="formInput.description_absent"
                                    @input="updateDescription()"
-                                   class="w-full text-xs rounded-xl border-gray-200 focus:border-hops-mid focus:ring-hops-mid px-3 py-2">
+                                   :class="hasError('description.absent') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-hops-mid focus:ring-hops-mid'"
+                                   class="w-full text-xs rounded-xl border px-3 py-2">
+                            <template x-if="hasError('description.absent')">
+                                <span class="text-[10px] text-red-600 font-semibold mt-1 block" x-text="getError('description.absent')"></span>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -84,6 +109,7 @@
                                 </label>
                             @endforeach
                         </div>
+                        <x-input-error :messages="$errors->get('aroma.present')" class="mt-2" />
                     </div>
 
                     <div class="pt-2 border-t border-dashed border-gray-200">
@@ -102,6 +128,7 @@
                                 </label>
                             @endforeach
                         </div>
+                        <x-input-error :messages="$errors->get('aroma.absent')" class="mt-2" />
                     </div>
                 </div>
 
@@ -113,7 +140,7 @@
                     <div class="space-y-3.5">
                         <template x-for="(spec, key) in ingredientMeta" :key="key">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-2.5 last:border-0 last:pb-0">
-                                <div class="flex items-center gap-2 sm:w-1/3">
+                                <div class="flex items-center gap-2 sm:w-1/3 shrink-0">
                                     <input type="checkbox" 
                                            x-model="query.ingredients[key].enabled"
                                            @change="generateJson()"
@@ -122,26 +149,37 @@
                                     <label :for="'enable-' + key" class="text-xs font-bold text-hops-ink uppercase cursor-pointer" x-text="spec.label"></label>
                                 </div>
 
-                                <div class="flex items-center gap-2 flex-grow sm:w-2/3" x-show="query.ingredients[key].enabled" x-transition>
-                                    <div class="flex items-center gap-1.5 flex-1">
-                                        <span class="text-[10px] text-gray-400">Min</span>
-                                        <input type="number" 
-                                               step="0.01" 
-                                               x-model.number="query.ingredients[key].min" 
-                                               @input="generateJson()"
-                                               class="w-full text-xs rounded-lg border-gray-200 px-2 py-1 focus:border-hops-mid focus:ring-hops-mid">
+                                <div class="flex-grow sm:w-2/3 flex flex-col gap-1.5">
+                                    <div class="flex items-center gap-2 w-full" x-show="query.ingredients[key].enabled" x-transition>
+                                        <div class="flex flex-col flex-1 min-w-[70px]">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="text-[10px] text-gray-400 shrink-0">Min</span>
+                                                <input type="number" 
+                                                       step="0.01" 
+                                                       x-model.number="query.ingredients[key].min" 
+                                                       @input="generateJson()"
+                                                       :class="hasError('ingredients.' + key) ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-hops-mid focus:ring-hops-mid'"
+                                                       class="w-full text-xs rounded-lg border px-2 py-1">
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col flex-1 min-w-[70px]">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="text-[10px] text-gray-400 shrink-0">Max</span>
+                                                <input type="number" 
+                                                       step="0.01" 
+                                                       x-model.number="query.ingredients[key].max" 
+                                                       @input="generateJson()"
+                                                       :class="hasError('ingredients.' + key) ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-hops-mid focus:ring-hops-mid'"
+                                                       class="w-full text-xs rounded-lg border px-2 py-1">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="flex items-center gap-1.5 flex-1">
-                                        <span class="text-[10px] text-gray-400">Max</span>
-                                        <input type="number" 
-                                               step="0.01" 
-                                               x-model.number="query.ingredients[key].max" 
-                                               @input="generateJson()"
-                                               class="w-full text-xs rounded-lg border-gray-200 px-2 py-1 focus:border-hops-mid focus:ring-hops-mid">
+                                    <div class="w-full" x-show="query.ingredients[key].enabled && hasError('ingredients.' + key)">
+                                        <span class="text-[10px] text-red-600 font-semibold block leading-tight" x-text="getError('ingredients.' + key)"></span>
                                     </div>
-                                </div>
-                                <div class="text-xs text-gray-400 text-right sm:w-2/3" x-show="!query.ingredients[key].enabled">
-                                    {{ __('Any content') }}
+                                    <div class="text-xs text-gray-400 text-right w-full" x-show="!query.ingredients[key].enabled">
+                                        {{ __('Any content') }}
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -160,12 +198,16 @@
                             </label>
                             <select x-model="query.feeling.bitterness"
                                     @change="generateJson()"
-                                    class="w-full text-xs rounded-xl border-gray-200 focus:border-hops-mid focus:ring-hops-mid px-3 py-2 bg-white">
+                                    :class="hasError('feeling.bitterness') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-hops-mid focus:ring-hops-mid'"
+                                    class="w-full text-xs rounded-xl border px-3 py-2 bg-white">
                                 <option value="">{{ __('Any') }}</option>
                                 @foreach(\HopsWeb\Enums\Bitterness::cases() as $bitter)
                                     <option value="{{ $bitter->value }}">{{ __($bitter->value) }}</option>
                                 @endforeach
                             </select>
+                            <template x-if="hasError('feeling.bitterness')">
+                                <span class="text-[10px] text-red-600 font-semibold mt-1 block" x-text="getError('feeling.bitterness')"></span>
+                            </template>
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">
@@ -173,12 +215,16 @@
                             </label>
                             <select x-model="query.feeling.aromaticity"
                                     @change="generateJson()"
-                                    class="w-full text-xs rounded-xl border-gray-200 focus:border-hops-mid focus:ring-hops-mid px-3 py-2 bg-white">
+                                    :class="hasError('feeling.aromaticity') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-hops-mid focus:ring-hops-mid'"
+                                    class="w-full text-xs rounded-xl border px-3 py-2 bg-white">
                                 <option value="">{{ __('Any') }}</option>
                                 @foreach(\HopsWeb\Enums\Aromaticity::cases() as $aroma)
                                     <option value="{{ $aroma->value }}">{{ __($aroma->value) }}</option>
                                 @endforeach
                             </select>
+                            <template x-if="hasError('feeling.aromaticity')">
+                                <span class="text-[10px] text-red-600 font-semibold mt-1 block" x-text="getError('feeling.aromaticity')"></span>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -186,9 +232,11 @@
             </div>
 
             <div class="xl:col-span-5 flex flex-col h-full space-y-4">
-                <div class="flex-grow bg-gray-900 rounded-2xl border border-gray-800 p-4 flex flex-col shadow-inner">
+                <div :class="hasError('query_json') ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-800'"
+                     class="flex-grow bg-gray-900 rounded-2xl border p-4 flex flex-col shadow-inner transition">
                     <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-3">
-                        <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-green-400">
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider"
+                              :class="hasError('query_json') ? 'text-red-400' : 'text-green-400'">
                             <x-lucide-code class="w-3.5 h-3.5" />
                             {{ __('Live JSON DTO editor') }}
                         </span>
@@ -201,9 +249,11 @@
                               x-model="rawJson"
                               @input="parseJson()"
                               rows="18"
-                              class="w-full font-mono text-xs text-green-400 bg-transparent border-0 focus:ring-0 p-0 resize-none flex-grow"
+                              class="w-full font-mono text-xs bg-transparent border-0 focus:ring-0 p-0 resize-none flex-grow"
+                              :class="hasError('query_json') ? 'text-red-400 placeholder-red-700/50' : 'text-green-400'"
                               placeholder="{}"></textarea>
                 </div>
+                <x-input-error :messages="$errors->get('query_json')" class="mt-1" />
 
                 <div class="p-4 bg-hops-light rounded-xl border border-hops-mid/10 flex items-start gap-2.5">
                     <x-lucide-info class="w-5 h-5 text-hops-mid mt-0.5 shrink-0" />

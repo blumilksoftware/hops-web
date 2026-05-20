@@ -29,7 +29,7 @@
 <div>
     <x-input-label for="description" :value="__('Description')" />
     <textarea id="description" name="description" rows="4"
-        class="mt-1 block w-full border-hops-warm focus:border-hops-accent focus:ring-hops-accent rounded-md shadow-sm">{{ old('description', $hop->description ?? '') }}</textarea>
+        class="mt-1 block w-full {{ $errors->has('description') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-hops-warm focus:border-hops-accent focus:ring-hops-accent' }} rounded-md shadow-sm">{{ old('description', $hop->description ?? '') }}</textarea>
     <x-input-error :messages="$errors->get('description')" class="mt-2" />
 </div>
 
@@ -118,7 +118,7 @@
         <div>
             <x-input-label for="aromaticity" :value="__('Aromaticity')" />
             <select id="aromaticity" name="aromaticity"
-                class="mt-1 block w-full border-hops-warm focus:border-hops-accent focus:ring-hops-accent rounded-md shadow-sm">
+                class="mt-1 block w-full {{ $errors->has('aromaticity') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-hops-warm focus:border-hops-accent focus:ring-hops-accent' }} rounded-md shadow-sm">
                 <option value="">—</option>
                 @foreach (\HopsWeb\Enums\Aromaticity::cases() as $case)
                     <option value="{{ $case->value }}"
@@ -133,7 +133,7 @@
         <div>
             <x-input-label for="thiols" :value="__('Thiols')" />
             <select id="thiols" name="thiols"
-                class="mt-1 block w-full border-hops-warm focus:border-hops-accent focus:ring-hops-accent rounded-md shadow-sm">
+                class="mt-1 block w-full {{ $errors->has('thiols') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-hops-warm focus:border-hops-accent focus:ring-hops-accent' }} rounded-md shadow-sm">
                 <option value="">—</option>
                 @foreach (\HopsWeb\Enums\Aromaticity::cases() as $case)
                     <option value="{{ $case->value }}"
@@ -148,7 +148,7 @@
         <div>
             <x-input-label for="bitterness" :value="__('Bitterness')" />
             <select id="bitterness" name="bitterness"
-                class="mt-1 block w-full border-hops-warm focus:border-hops-accent focus:ring-hops-accent rounded-md shadow-sm">
+                class="mt-1 block w-full {{ $errors->has('bitterness') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-hops-warm focus:border-hops-accent focus:ring-hops-accent' }} rounded-md shadow-sm">
                 <option value="">—</option>
                 @foreach (\HopsWeb\Enums\Bitterness::cases() as $case)
                     <option value="{{ $case->value }}"
@@ -163,7 +163,7 @@
         <div>
             <x-input-label for="maturity" :value="__('Maturity')" />
             <select id="maturity" name="maturity"
-                class="mt-1 block w-full border-hops-warm focus:border-hops-accent focus:ring-hops-accent rounded-md shadow-sm">
+                class="mt-1 block w-full {{ $errors->has('maturity') ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-hops-warm focus:border-hops-accent focus:ring-hops-accent' }} rounded-md shadow-sm">
                 <option value="">—</option>
                 @foreach (\HopsWeb\Enums\HopMaturity::cases() as $case)
                     <option value="{{ $case->value }}"
@@ -209,7 +209,7 @@
             <div>
                 <x-input-label :for="$field" :value="__($label)" />
                 <select id="{{ $field }}" name="{{ $field }}"
-                    class="mt-1 block w-full border-hops-warm focus:border-hops-accent focus:ring-hops-accent rounded-md shadow-sm">
+                    class="mt-1 block w-full {{ $errors->has($field) ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-hops-warm focus:border-hops-accent focus:ring-hops-accent' }} rounded-md shadow-sm">
                     <option value="">—</option>
                     @foreach (\HopsWeb\Enums\Resistance::cases() as $case)
                         <option value="{{ $case->value }}"

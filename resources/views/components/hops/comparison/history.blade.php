@@ -4,10 +4,15 @@
 ])
 
 <aside class="w-full lg:w-80 shrink-0 bg-white rounded-2xl border border-hops-light p-5 shadow-sm">
-    <h3 class="text-sm font-bold text-hops-ink uppercase tracking-wider mb-4 flex items-center gap-2">
-        <x-lucide-history class="w-4 h-4 text-hops-mid" />
-        {{ __('Query History') }}
-    </h3>
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-sm font-bold text-hops-ink uppercase tracking-wider flex items-center gap-2">
+            <x-lucide-history class="w-4 h-4 text-hops-mid" />
+            {{ __('Query History') }}
+        </h3>
+        <button type="button" @click="toggleSidebar()" class="text-gray-400 hover:text-hops-mid focus:outline-none p-1 rounded-lg hover:bg-gray-100 transition cursor-pointer" title="{{ __('Hide History') }}">
+            <x-lucide-chevron-left class="w-4.5 h-4.5" />
+        </button>
+    </div>
 
     <div class="space-y-3 overflow-y-auto max-h-[600px] pr-1">
         @forelse($history as $query)
