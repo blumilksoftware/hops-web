@@ -15,7 +15,7 @@ class FakeNLPResolverClient implements NLPResolverClientInterface
                 "present" => ["Citra"],
             ],
             aroma: [
-                "present" => ["citrus", "tropical_fruit"],
+                "present" => ["citrusy", "fruity"],
             ],
         );
     }

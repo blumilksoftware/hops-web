@@ -126,10 +126,71 @@ class ComparisonInterfaceTest extends TestCase
         $activeQuery = $response->viewData("activeQuery");
         $this->assertEquals($hopQuery->id, $activeQuery->id);
         $response->assertViewHas("results");
-        $response->assertViewHas("hops");
 
-        $hops = $response->viewData("hops");
-        $this->assertTrue($hops->has("cascade"));
-        $this->assertEquals("Cascade", $hops->get("cascade")->name);
+        $results = $response->viewData("results");
+        $this->assertCount(1, $results);
+        $this->assertEquals("cascade", $results[0]["slug"]);
+        $this->assertEquals(0.95, $results[0]["score"]);
+        $this->assertNotNull($results[0]["hop"]);
+        $this->assertEquals("Cascade", $results[0]["hop"]->name);
+    }
+
+    public function testComparisonQueryValidationProvidesReadableMessagesForNestedArrays(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route("comparison.store"), [
+            "type" => "form",
+            "query_json" => json_encode([
+                "aroma" => [
+                    "present" => ["invalid_aroma_1", "invalid_aroma_2"],
+                ],
+            ]),
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHasErrors([
+            "aroma.present.0" => "The aroma descriptor 'invalid_aroma_1' is invalid.",
+            "aroma.present.1" => "The aroma descriptor 'invalid_aroma_2' is invalid.",
+        ]);
+    }
+
+    public function testComparisonQueryValidationPreservesTabTypeInput(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route("comparison.store"), [
+            "type" => "form",
+            "query_json" => json_encode([
+                "aroma" => [
+                    "present" => ["invalid_aroma"],
+                ],
+            ]),
+        ]);
+
+        $response->assertRedirect();
+        $this->assertEquals("form", session()->getOldInput("type"));
+    }
+
+    public function testComparisonQueryValidationFailsWhenRangeIngredientsAreEnabledWithoutValues(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post(route("comparison.store"), [
+            "type" => "form",
+            "query_json" => json_encode([
+                "ingredients" => [
+                    "alphas" => [
+                        "min" => null,
+                        "max" => null,
+                    ],
+                ],
+            ]),
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHasErrors([
+            "ingredients.alphas" => "The alpha acids range min and max must be numeric.",
+        ]);
     }
 }

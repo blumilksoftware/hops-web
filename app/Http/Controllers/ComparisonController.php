@@ -26,7 +26,7 @@ class ComparisonController extends Controller
     public function index(Request $request): View
     {
         $user = Auth::user();
-        $history = $user->hopQueries()->latest()->take(15)->get();
+        $historyCollection = $user->hopQueries()->latest()->take(15)->get();
 
         $activeQuery = null;
         $hops = collect();
@@ -46,7 +46,35 @@ class ComparisonController extends Controller
             }
         }
 
-        return view("comparison.index", compact("history", "activeQuery", "results", "hops"));
+        $history = $historyCollection->map(fn(HopQuery $q): array => [
+            "id" => $q->id,
+            "isActive" => $activeQuery && $activeQuery->id === $q->id,
+            "isNlp" => isset($q->query["_nlp_query"]),
+            "nlpQuery" => $q->query["_nlp_query"] ?? null,
+            "created_at" => $q->created_at,
+            "aromaCount" => isset($q->query["aroma"]["present"]) && is_array($q->query["aroma"]["present"]) ? count($q->query["aroma"]["present"]) : 0,
+            "firstTarget" => isset($q->query["target"]["present"]) && is_array($q->query["target"]["present"]) && !empty($q->query["target"]["present"]) ? $q->query["target"]["present"][0] : null,
+            "hasIngredients" => isset($q->query["ingredients"]) && !empty($q->query["ingredients"]),
+        ]);
+
+        $mappedResults = collect($results)->map(function (array $result) use ($hops): array {
+            $slug = $result["hop_id"] ?? null;
+            $hop = $slug ? ($hops[$slug] ?? null) : null;
+
+            return [
+                "slug" => $slug,
+                "score" => $result["similarity_score"] ?? 0.0,
+                "explainability" => $result["explainability"] ?? [],
+                "hop" => $hop,
+                "activeAromas" => $hop ? collect($hop->getActiveAromas())->map(fn($a) => $a->label())->toArray() : [],
+            ];
+        })->toArray();
+
+        return view("comparison.index", [
+            "history" => $history,
+            "activeQuery" => $activeQuery,
+            "results" => $mappedResults,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -79,7 +107,12 @@ class ComparisonController extends Controller
             $queryData = array_filter($queryData ?? [], fn($value): bool => $value !== null);
 
             $validationRequest = new ComparisonQueryRequest();
-            $validator = Validator::make($queryData, $validationRequest->rules());
+            $validator = Validator::make(
+                $queryData,
+                $validationRequest->rules(),
+                $validationRequest->messages(),
+                $validationRequest->attributes(),
+            );
             $validationRequest->withValidator($validator);
 
             if ($validator->fails()) {

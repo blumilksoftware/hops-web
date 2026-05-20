@@ -21,7 +21,7 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="{
-        activeTab: '{{ ($activeQuery && !isset($activeQuery->query['_nlp_query'])) ? 'form' : 'nlp' }}',
+        activeTab: '{{ old('type', ($activeQuery && !isset($activeQuery->query['_nlp_query'])) ? 'form' : 'nlp') }}',
         nlpText: '{{ $activeQuery->query['_nlp_query'] ?? '' }}',
         suggestions: [
             '{{ __('I want a citrusy and fruity hop with high bitterness') }}',
@@ -73,7 +73,7 @@
                     </div>
                 </div>
 
-                <x-hops.comparison.results :activeQuery="$activeQuery" :results="$results" :hops="$hops" />
+                <x-hops.comparison.results :activeQuery="$activeQuery" :results="$results" />
 
             </div>
 
@@ -130,15 +130,15 @@
                     }
                     
                     if (initialQuery.ingredients) {
-                        for (let k in activeQuery.ingredients) {
-                            if (initialQuery.ingredients[k] !== undefined && initialQuery.ingredients[k] !== null) {
-                                activeQuery.ingredients[k].enabled = true;
-                                if (typeof initialQuery.ingredients[k] === 'object') {
-                                    activeQuery.ingredients[k].min = initialQuery.ingredients[k].min ?? null;
-                                    activeQuery.ingredients[k].max = initialQuery.ingredients[k].max ?? null;
+                        for (let key in activeQuery.ingredients) {
+                            if (initialQuery.ingredients[key] !== undefined && initialQuery.ingredients[key] !== null) {
+                                activeQuery.ingredients[key].enabled = true;
+                                if (typeof initialQuery.ingredients[key] === 'object') {
+                                    activeQuery.ingredients[key].min = initialQuery.ingredients[key].min ?? null;
+                                    activeQuery.ingredients[key].max = initialQuery.ingredients[key].max ?? null;
                                 } else {
-                                    activeQuery.ingredients[k].min = initialQuery.ingredients[k];
-                                    activeQuery.ingredients[k].max = initialQuery.ingredients[k];
+                                    activeQuery.ingredients[key].min = initialQuery.ingredients[key];
+                                    activeQuery.ingredients[key].max = initialQuery.ingredients[key];
                                 }
                             }
                         }
@@ -175,24 +175,24 @@
                     updateTarget() {
                         this.query.target.present = this.formInput.target_present
                             .split(',')
-                            .map(x => x.trim())
-                            .filter(x => x.length > 0);
+                            .map(item => item.trim())
+                            .filter(item => item.length > 0);
                         this.query.target.absent = this.formInput.target_absent
                             .split(',')
-                            .map(x => x.trim())
-                            .filter(x => x.length > 0);
+                            .map(item => item.trim())
+                            .filter(item => item.length > 0);
                         this.generateJson();
                     },
 
                     updateDescription() {
                         this.query.description.present = this.formInput.description_present
                             .split(',')
-                            .map(x => x.trim())
-                            .filter(x => x.length > 0);
+                            .map(item => item.trim())
+                            .filter(item => item.length > 0);
                         this.query.description.absent = this.formInput.description_absent
                             .split(',')
-                            .map(x => x.trim())
-                            .filter(x => x.length > 0);
+                            .map(item => item.trim())
+                            .filter(item => item.length > 0);
                         this.generateJson();
                     },
 
@@ -225,22 +225,16 @@
 
                         let hasIngredients = false;
                         const ingPayload = {};
-                        for (let k in this.query.ingredients) {
-                            const spec = this.query.ingredients[k];
+                        for (let key in this.query.ingredients) {
+                            const spec = this.query.ingredients[key];
                             if (spec.enabled) {
                                 hasIngredients = true;
-                                if (spec.min !== null && spec.max !== null) {
-                                    if (spec.min === spec.max) {
-                                        ingPayload[k] = spec.min;
-                                    } else {
-                                        ingPayload[k] = { min: spec.min, max: spec.max };
-                                    }
-                                } else if (spec.min !== null) {
-                                    ingPayload[k] = { min: spec.min };
-                                } else if (spec.max !== null) {
-                                    ingPayload[k] = { max: spec.max };
+                                const minVal = (spec.min !== null && spec.min !== "") ? spec.min : null;
+                                const maxVal = (spec.max !== null && spec.max !== "") ? spec.max : null;
+                                if (minVal !== null && maxVal !== null && minVal === maxVal) {
+                                    ingPayload[key] = minVal;
                                 } else {
-                                    ingPayload[k] = null;
+                                    ingPayload[key] = { min: minVal, max: maxVal };
                                 }
                             }
                         }
@@ -272,26 +266,26 @@
                                 this.query.feeling.bitterness = (parsed.feeling && parsed.feeling.bitterness) || '';
                                 this.query.feeling.aromaticity = (parsed.feeling && parsed.feeling.aromaticity) || '';
 
-                                for (let k in this.query.ingredients) {
-                                    const ing = parsed.ingredients && parsed.ingredients[k];
+                                for (let key in this.query.ingredients) {
+                                    const ing = parsed.ingredients && parsed.ingredients[key];
                                     if (ing !== undefined && ing !== null) {
-                                        this.query.ingredients[k].enabled = true;
+                                        this.query.ingredients[key].enabled = true;
                                         if (typeof ing === 'object') {
-                                            this.query.ingredients[k].min = ing.min ?? null;
-                                            this.query.ingredients[k].max = ing.max ?? null;
+                                            this.query.ingredients[key].min = ing.min ?? null;
+                                            this.query.ingredients[key].max = ing.max ?? null;
                                         } else {
-                                            this.query.ingredients[k].min = ing;
-                                            this.query.ingredients[k].max = ing;
+                                            this.query.ingredients[key].min = ing;
+                                            this.query.ingredients[key].max = ing;
                                         }
                                     } else {
-                                        this.query.ingredients[k].enabled = false;
-                                        this.query.ingredients[k].min = null;
-                                        this.query.ingredients[k].max = null;
+                                        this.query.ingredients[key].enabled = false;
+                                        this.query.ingredients[key].min = null;
+                                        this.query.ingredients[key].max = null;
                                     }
                                 }
 
                             }
-                        } catch (e) {
+                        } catch (error) {
                         }
                     }
                 };

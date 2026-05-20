@@ -15,9 +15,21 @@ class RangeOrNumberOrNull implements ValidationRule
             return;
         }
 
+        $friendlyAttributes = [
+            "ingredients.alphas" => "alpha acids range",
+            "ingredients.betas" => "beta acids range",
+            "ingredients.cohumulones" => "cohumulone range",
+            "ingredients.polyphenols" => "polyphenols range",
+            "ingredients.xanthohumol" => "xanthohumol range",
+            "ingredients.oils" => "total oils range",
+            "ingredients.farnesenes" => "farnesene range",
+            "ingredients.linalool" => "linalool range",
+        ];
+        $displayName = $friendlyAttributes[$attribute] ?? str_replace("_", " ", $attribute);
+
         if (is_int($value) || is_float($value)) {
             if ($value < 0) {
-                $fail("The {$attribute} must be a non-negative number.");
+                $fail("The {$displayName} must be a non-negative number.");
             }
 
             return;
@@ -25,7 +37,7 @@ class RangeOrNumberOrNull implements ValidationRule
 
         if (is_array($value)) {
             if (!array_key_exists("min", $value) || !array_key_exists("max", $value)) {
-                $fail("The {$attribute} range must contain both 'min' and 'max' keys.");
+                $fail("The {$displayName} range must contain both 'min' and 'max' keys.");
 
                 return;
             }
@@ -34,7 +46,7 @@ class RangeOrNumberOrNull implements ValidationRule
             $max = $value["max"];
 
             if (!is_numeric($min) || !is_numeric($max)) {
-                $fail("The {$attribute} min and max must be numeric.");
+                $fail("The {$displayName} min and max must be numeric.");
 
                 return;
             }
@@ -43,13 +55,13 @@ class RangeOrNumberOrNull implements ValidationRule
             $max = (float)$max;
 
             if ($min < 0 || $max < 0) {
-                $fail("The {$attribute} min and max must be non-negative.");
+                $fail("The {$displayName} min and max must be non-negative.");
 
                 return;
             }
 
             if ($min >= $max) {
-                $fail("The {$attribute} min must be less than max.");
+                $fail("The {$displayName} min must be less than max.");
 
                 return;
             }
@@ -57,6 +69,6 @@ class RangeOrNumberOrNull implements ValidationRule
             return;
         }
 
-        $fail("The {$attribute} must be a number, a range object, or null.");
+        $fail("The {$displayName} must be a number, a range object, or null.");
     }
 }

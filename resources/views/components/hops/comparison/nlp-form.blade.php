@@ -24,11 +24,11 @@
                 {{ __('Or try one of these suggestions') }}:
             </span>
             <div class="flex flex-col sm:flex-row gap-2">
-                <template x-for="s in suggestions" :key="s">
+                <template x-for="suggestion in suggestions" :key="suggestion">
                     <button type="button" 
-                            @click="nlpText = s"
+                            @click="nlpText = suggestion"
                             class="text-left text-xs bg-hops-light hover:bg-hops-accent/15 border border-hops-mid/10 hover:border-hops-accent/30 text-hops-darkest rounded-xl px-3 py-2 transition cursor-pointer font-medium flex-1">
-                        <span x-text="s"></span>
+                        <span x-text="suggestion"></span>
                     </button>
                 </template>
             </div>

@@ -13,6 +13,10 @@ class DemoSeeder extends Seeder
 {
     public function run(): void
     {
+        Hop::factory()->create(["name" => "Cascade", "slug" => "cascade", "country" => "United States"]);
+        Hop::factory()->create(["name" => "Centennial", "slug" => "centennial", "country" => "United States"]);
+        Hop::factory()->create(["name" => "Columbus", "slug" => "columbus", "country" => "United States"]);
+
         Hop::factory(50)->create();
         User::factory(30)->create();
 
