@@ -7,6 +7,7 @@ namespace Tests\Feature;
 use HopsWeb\Models\Hop;
 use HopsWeb\Models\HopQuery;
 use HopsWeb\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -133,6 +134,25 @@ class ComparisonInterfaceTest extends TestCase
         $this->assertEquals(0.95, $results[0]["score"]);
         $this->assertNotNull($results[0]["hop"]);
         $this->assertEquals("Cascade", $results[0]["hop"]->name);
+    }
+
+    public function testUserQueryHistoryIsPaginated(): void
+    {
+        $user = User::factory()->create();
+
+        HopQuery::factory()->count(12)->create([
+            "user_id" => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)->get(route("comparison.index"));
+
+        $response->assertOk();
+        $response->assertViewHas("history");
+
+        $history = $response->viewData("history");
+        $this->assertInstanceOf(LengthAwarePaginator::class, $history);
+        $this->assertCount(10, $history->items());
+        $this->assertEquals(12, $history->total());
     }
 
     public function testComparisonQueryValidationProvidesReadableMessagesForNestedArrays(): void

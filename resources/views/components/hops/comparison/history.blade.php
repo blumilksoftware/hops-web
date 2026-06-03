@@ -67,5 +67,33 @@
                 </p>
             </div>
         @endforelse
+
+        @if($history->hasPages())
+            <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
+                @if($history->onFirstPage())
+                    <span class="px-2.5 py-1.5 text-gray-400 bg-gray-50 border border-gray-100 rounded-lg cursor-not-allowed font-semibold">
+                        &larr; {{ __('Prev') }}
+                    </span>
+                @else
+                    <a href="{{ $history->previousPageUrl() }}" class="px-2.5 py-1.5 text-hops-ink bg-white border border-gray-200 rounded-lg hover:bg-gray-50 font-semibold transition">
+                        &larr; {{ __('Prev') }}
+                    </a>
+                @endif
+
+                <span class="text-gray-500 font-medium">
+                    {{ $history->currentPage() }} / {{ $history->lastPage() }}
+                </span>
+
+                @if($history->hasMorePages())
+                    <a href="{{ $history->nextPageUrl() }}" class="px-2.5 py-1.5 text-hops-ink bg-white border border-gray-200 rounded-lg hover:bg-gray-50 font-semibold transition">
+                        {{ __('Next') }} &rarr;
+                    </a>
+                @else
+                    <span class="px-2.5 py-1.5 text-gray-400 bg-gray-50 border border-gray-100 rounded-lg cursor-not-allowed font-semibold">
+                        {{ __('Next') }} &rarr;
+                    </span>
+                @endif
+            </div>
+        @endif
     </div>
 </aside>

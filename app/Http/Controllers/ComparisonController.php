@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace HopsWeb\Http\Controllers;
 
 use HopsWeb\DTO\Engine\ComparisonQueryDTO;
+use HopsWeb\Enums\AromaProfile;
 use HopsWeb\Http\Requests\ComparisonQueryRequest;
 use HopsWeb\Models\Hop;
 use HopsWeb\Models\HopQuery;
@@ -26,36 +27,38 @@ class ComparisonController extends Controller
     public function index(Request $request): View
     {
         $user = Auth::user();
-        $historyCollection = $user->hopQueries()->latest()->take(15)->get();
 
         $activeQuery = null;
-        $hops = collect();
-        $results = [];
 
         if ($request->filled("history_id")) {
             $activeQuery = $user->hopQueries()->find($request->input("history_id"));
-
-            if ($activeQuery) {
-                $results = $activeQuery->response["results"] ?? [];
-
-                $slugs = collect($results)->pluck("hop_id")->filter()->toArray();
-
-                if (!empty($slugs)) {
-                    $hops = Hop::whereIn("slug", $slugs)->get()->keyBy("slug");
-                }
-            }
         }
 
-        $history = $historyCollection->map(fn(HopQuery $q): array => [
-            "id" => $q->id,
-            "isActive" => $activeQuery && $activeQuery->id === $q->id,
-            "isNlp" => isset($q->query["_nlp_query"]),
-            "nlpQuery" => $q->query["_nlp_query"] ?? null,
-            "created_at" => $q->created_at,
-            "aromaCount" => isset($q->query["aroma"]["present"]) && is_array($q->query["aroma"]["present"]) ? count($q->query["aroma"]["present"]) : 0,
-            "firstTarget" => isset($q->query["target"]["present"]) && is_array($q->query["target"]["present"]) && !empty($q->query["target"]["present"]) ? $q->query["target"]["present"][0] : null,
-            "hasIngredients" => isset($q->query["ingredients"]) && !empty($q->query["ingredients"]),
+        $historyPaginator = $user->hopQueries()->latest()->paginate(10)->withQueryString();
+
+        $history = $historyPaginator->through(fn(HopQuery $query): array => [
+            "id" => $query->id,
+            "isActive" => $activeQuery && $activeQuery->id === $query->id,
+            "isNlp" => isset($query->query["_nlp_query"]),
+            "nlpQuery" => $query->query["_nlp_query"] ?? null,
+            "created_at" => $query->created_at,
+            "aromaCount" => isset($query->query["aroma"]["present"]) && is_array($query->query["aroma"]["present"]) ? count($query->query["aroma"]["present"]) : 0,
+            "firstTarget" => isset($query->query["target"]["present"]) && is_array($query->query["target"]["present"]) && !empty($query->query["target"]["present"]) ? $query->query["target"]["present"][0] : null,
+            "hasIngredients" => isset($query->query["ingredients"]) && !empty($query->query["ingredients"]),
         ]);
+
+        $hops = collect();
+        $results = [];
+
+        if ($activeQuery) {
+            $results = $activeQuery->response["results"] ?? [];
+
+            $slugs = collect($results)->pluck("hop_id")->filter()->toArray();
+
+            if (!empty($slugs)) {
+                $hops = Hop::whereIn("slug", $slugs)->get()->keyBy("slug");
+            }
+        }
 
         $mappedResults = collect($results)->map(function (array $result) use ($hops): array {
             $slug = $result["hop_id"] ?? null;
@@ -66,7 +69,7 @@ class ComparisonController extends Controller
                 "score" => $result["similarity_score"] ?? 0.0,
                 "explainability" => $result["explainability"] ?? [],
                 "hop" => $hop,
-                "activeAromas" => $hop ? collect($hop->getActiveAromas())->map(fn($a) => $a->label())->toArray() : [],
+                "activeAromas" => $hop ? collect($hop->getActiveAromas())->map(fn(AromaProfile $aroma) => $aroma->label())->toArray() : [],
             ];
         })->toArray();
 
