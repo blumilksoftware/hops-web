@@ -1,0 +1,330 @@
+<x-hops.layout>
+    <x-slot:title>{{ __('Hop Similarity Comparison Engine') }}</x-slot:title>
+
+    <div class="relative w-full bg-white py-12 px-4 sm:px-6 lg:px-8 border-b border-hops-light overflow-hidden">
+        <div class="absolute inset-0 flex justify-center items-center pointer-events-none opacity-5">
+            <x-lucide-hop class="w-[640px] h-[640px]" />
+        </div>
+
+        <div class="relative max-w-4xl mx-auto text-center">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-hops-light text-hops-mid border border-hops-mid/20 mb-4">
+                <x-phosphor-scales-bold class="w-3.5 h-3.5" />
+                {{ __('Comparison Engine Workspace') }}
+            </span>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-hops-ink text-center tracking-tight">
+                {{ __('Find The Perfect Hop Match') }}
+            </h1>
+            <p class="text-sm text-gray-500 text-center mt-2 max-w-xl mx-auto">
+                {{ __('Query our advanced similarity engine using natural language descriptions or construct structured constraints via visual and JSON configurations.') }}
+            </p>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="{
+        activeTab: '{{ old('type', ($activeQuery && !isset($activeQuery->query['_nlp_query'])) ? 'form' : 'nlp') }}',
+        nlpText: '{{ $activeQuery->query['_nlp_query'] ?? '' }}',
+        showSidebar: localStorage.getItem('showSidebar') !== 'false',
+        toggleSidebar() {
+            this.showSidebar = !this.showSidebar;
+            localStorage.setItem('showSidebar', this.showSidebar);
+        },
+        suggestions: [
+            '{{ __('I want a citrusy and fruity hop with high bitterness') }}',
+            '{{ __('Looking for Saaz substitute with floral notes and low alpha acid') }}',
+            '{{ __('High total oil hop with herbal aroma and medium bitterness') }}'
+        ]
+    }">
+        <div class="flex flex-col lg:flex-row gap-8 items-start transition-all duration-300">
+            
+            <div x-show="showSidebar" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 -translate-x-8 max-w-0"
+                 x-transition:enter-end="opacity-100 translate-x-0 max-w-xs"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-x-0 max-w-xs"
+                 x-transition:leave-end="opacity-0 -translate-x-8 max-w-0"
+                 class="w-full lg:w-80 shrink-0">
+                <x-hops.comparison.history :history="$history" :activeQuery="$activeQuery" />
+            </div>
+
+            <div class="flex-grow w-full space-y-8">
+                <div x-show="!showSidebar" x-transition class="flex items-center mb-4">
+                    <button type="button" @click="toggleSidebar()" class="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white hover:bg-hops-light text-hops-ink hover:text-hops-mid rounded-xl border border-hops-light shadow-xs text-xs font-bold transition cursor-pointer">
+                        <x-lucide-history class="w-4 h-4 text-hops-mid shrink-0" />
+                        {{ __('Show Query History') }}
+                        <x-lucide-chevron-right class="w-4 h-4 text-hops-mid shrink-0 ml-0.5" />
+                    </button>
+                </div>
+                
+                <div class="bg-white rounded-3xl border border-hops-light shadow-sm overflow-hidden">
+                    <div class="flex border-b border-gray-100 bg-gray-50/50 p-2 gap-1">
+                        <button @click="activeTab = 'nlp'"
+                                :class="activeTab === 'nlp' ? 'bg-white text-hops-ink shadow-xs border border-gray-100' : 'text-gray-500 hover:text-hops-ink hover:bg-gray-100/50'"
+                                class="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <x-lucide-message-circle class="w-4 h-4" />
+                            {{ __('Natural Language') }}
+                        </button>
+                        <button @click="activeTab = 'form'"
+                                :class="activeTab === 'form' ? 'bg-white text-hops-ink shadow-xs border border-gray-100' : 'text-gray-500 hover:text-hops-ink hover:bg-gray-100/50'"
+                                class="flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <x-sui-filtering class="w-4 h-4" />
+                            {{ __('JSON & Visual Builder') }}
+                        </button>
+                    </div>
+
+                    <div class="p-6">
+                        @if ($errors->any())
+                            <div class="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl flex gap-3 items-start x-transition">
+                                <div class="p-1.5 bg-red-100 text-red-600 rounded-xl shrink-0">
+                                    <x-eva-alert-circle class="w-4 h-4" />
+                                </div>
+                                <div class="space-y-1">
+                                    <h4 class="text-xs font-bold text-red-800 uppercase tracking-wider">
+                                        {{ __('Validation Errors') }}
+                                    </h4>
+                                    <ul class="list-disc pl-4 space-y-0.5">
+                                        @foreach ($errors->all() as $error)
+                                            <li class="text-xs text-red-600 font-medium leading-relaxed">{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
+                        @endif
+
+                        <x-hops.comparison.nlp-form :activeQuery="$activeQuery" />
+
+                        <x-hops.comparison.builder-form :activeQuery="$activeQuery" />
+
+                    </div>
+                </div>
+
+                <x-hops.comparison.results :activeQuery="$activeQuery" :results="$results" />
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('jsonBuilder', (initialQuery, validationErrors = {}) => {
+                const defaultQuery = {
+                    target: { present: [], absent: [] },
+                    aroma: { present: [], absent: [] },
+                    description: { present: [], absent: [] },
+                    ingredients: {
+                        alphas: { enabled: false, min: null, max: null },
+                        betas: { enabled: false, min: null, max: null },
+                        cohumulones: { enabled: false, min: null, max: null },
+                        polyphenols: { enabled: false, min: null, max: null },
+                        xanthohumol: { enabled: false, min: null, max: null },
+                        oils: { enabled: false, min: null, max: null },
+                        farnesenes: { enabled: false, min: null, max: null },
+                        linalool: { enabled: false, min: null, max: null }
+                    },
+                    feeling: { bitterness: '', aromaticity: '' }
+                };
+
+                let activeQuery = defaultQuery;
+                if (initialQuery) {
+                    activeQuery = { ...defaultQuery };
+                    
+                    if (initialQuery.target) {
+                        activeQuery.target = {
+                            present: initialQuery.target.present || [],
+                            absent: initialQuery.target.absent || []
+                        };
+                    }
+                    if (initialQuery.aroma) {
+                        activeQuery.aroma = {
+                            present: initialQuery.aroma.present || [],
+                            absent: initialQuery.aroma.absent || []
+                        };
+                    }
+                    if (initialQuery.description) {
+                        activeQuery.description = {
+                            present: initialQuery.description.present || [],
+                            absent: initialQuery.description.absent || []
+                        };
+                    }
+                    if (initialQuery.feeling) {
+                        activeQuery.feeling = {
+                            bitterness: initialQuery.feeling.bitterness || '',
+                            aromaticity: initialQuery.feeling.aromaticity || ''
+                        };
+                    }
+                    
+                    if (initialQuery.ingredients) {
+                        for (let key in activeQuery.ingredients) {
+                            if (initialQuery.ingredients[key] !== undefined && initialQuery.ingredients[key] !== null) {
+                                activeQuery.ingredients[key].enabled = true;
+                                if (typeof initialQuery.ingredients[key] === 'object') {
+                                    activeQuery.ingredients[key].min = initialQuery.ingredients[key].min ?? null;
+                                    activeQuery.ingredients[key].max = initialQuery.ingredients[key].max ?? null;
+                                } else {
+                                    activeQuery.ingredients[key].min = initialQuery.ingredients[key];
+                                    activeQuery.ingredients[key].max = initialQuery.ingredients[key];
+                                }
+                            }
+                        }
+                    }
+                }
+
+                const formInput = {
+                    target_present: activeQuery.target.present.join(', '),
+                    target_absent: activeQuery.target.absent.join(', '),
+                    description_present: activeQuery.description.present.join(', '),
+                    description_absent: activeQuery.description.absent.join(', ')
+                };
+
+                return {
+                    query: activeQuery,
+                    formInput: formInput,
+                    rawJson: '{}',
+                    validationErrors: validationErrors || {},
+                    
+                    ingredientMeta: {
+                        alphas: { label: 'Alpha Acid (%)' },
+                        betas: { label: 'Beta Acid (%)' },
+                        cohumulones: { label: 'Cohumulone (%)' },
+                        polyphenols: { label: 'Polyphenols (%)' },
+                        xanthohumol: { label: 'Xanthohumol (%)' },
+                        oils: { label: 'Total Oil (ml/100g)' },
+                        farnesenes: { label: 'Farnesene (%)' },
+                        linalool: { label: 'Linalool (%)' }
+                    },
+
+                    init() {
+                        this.generateJson();
+                    },
+
+                    updateTarget() {
+                        this.query.target.present = this.formInput.target_present
+                            .split(',')
+                            .map(item => item.trim())
+                            .filter(item => item.length > 0);
+                        this.query.target.absent = this.formInput.target_absent
+                            .split(',')
+                            .map(item => item.trim())
+                            .filter(item => item.length > 0);
+                        this.generateJson();
+                    },
+
+                    updateDescription() {
+                        this.query.description.present = this.formInput.description_present
+                            .split(',')
+                            .map(item => item.trim())
+                            .filter(item => item.length > 0);
+                        this.query.description.absent = this.formInput.description_absent
+                            .split(',')
+                            .map(item => item.trim())
+                            .filter(item => item.length > 0);
+                        this.generateJson();
+                    },
+
+                    generateJson() {
+                        const payload = {};
+
+                        if (this.query.target.present.length > 0 || this.query.target.absent.length > 0) {
+                            payload.target = {};
+                            if (this.query.target.present.length > 0) payload.target.present = this.query.target.present;
+                            if (this.query.target.absent.length > 0) payload.target.absent = this.query.target.absent;
+                        }
+
+                        if (this.query.aroma.present.length > 0 || this.query.aroma.absent.length > 0) {
+                            payload.aroma = {};
+                            if (this.query.aroma.present.length > 0) payload.aroma.present = this.query.aroma.present;
+                            if (this.query.aroma.absent.length > 0) payload.aroma.absent = this.query.aroma.absent;
+                        }
+
+                        if (this.query.description.present.length > 0 || this.query.description.absent.length > 0) {
+                            payload.description = {};
+                            if (this.query.description.present.length > 0) payload.description.present = this.query.description.present;
+                            if (this.query.description.absent.length > 0) payload.description.absent = this.query.description.absent;
+                        }
+
+                        if (this.query.feeling.bitterness || this.query.feeling.aromaticity) {
+                            payload.feeling = {};
+                            if (this.query.feeling.bitterness) payload.feeling.bitterness = this.query.feeling.bitterness;
+                            if (this.query.feeling.aromaticity) payload.feeling.aromaticity = this.query.feeling.aromaticity;
+                        }
+
+                        let hasIngredients = false;
+                        const ingPayload = {};
+                        for (let key in this.query.ingredients) {
+                            const spec = this.query.ingredients[key];
+                            if (spec.enabled) {
+                                hasIngredients = true;
+                                const minVal = (spec.min !== null && spec.min !== "") ? spec.min : null;
+                                const maxVal = (spec.max !== null && spec.max !== "") ? spec.max : null;
+                                if (minVal !== null && maxVal !== null && minVal === maxVal) {
+                                    ingPayload[key] = minVal;
+                                } else {
+                                    ingPayload[key] = { min: minVal, max: maxVal };
+                                }
+                            }
+                        }
+                        if (hasIngredients) {
+                            payload.ingredients = ingPayload;
+                        }
+
+                        this.rawJson = JSON.stringify(payload, null, 2);
+                    },
+
+                    parseJson() {
+                        try {
+                            const parsed = JSON.parse(this.rawJson);
+                            if (parsed && typeof parsed === 'object') {
+                                
+                                this.query.target.present = (parsed.target && parsed.target.present) || [];
+                                this.query.target.absent = (parsed.target && parsed.target.absent) || [];
+                                this.formInput.target_present = this.query.target.present.join(', ');
+                                this.formInput.target_absent = this.query.target.absent.join(', ');
+
+                                this.query.description.present = (parsed.description && parsed.description.present) || [];
+                                this.query.description.absent = (parsed.description && parsed.description.absent) || [];
+                                this.formInput.description_present = this.query.description.present.join(', ');
+                                this.formInput.description_absent = this.query.description.absent.join(', ');
+
+                                this.query.aroma.present = (parsed.aroma && parsed.aroma.present) || [];
+                                this.query.aroma.absent = (parsed.aroma && parsed.aroma.absent) || [];
+
+                                this.query.feeling.bitterness = (parsed.feeling && parsed.feeling.bitterness) || '';
+                                this.query.feeling.aromaticity = (parsed.feeling && parsed.feeling.aromaticity) || '';
+
+                                for (let key in this.query.ingredients) {
+                                    const ing = parsed.ingredients && parsed.ingredients[key];
+                                    if (ing !== undefined && ing !== null) {
+                                        this.query.ingredients[key].enabled = true;
+                                        if (typeof ing === 'object') {
+                                            this.query.ingredients[key].min = ing.min ?? null;
+                                            this.query.ingredients[key].max = ing.max ?? null;
+                                        } else {
+                                            this.query.ingredients[key].min = ing;
+                                            this.query.ingredients[key].max = ing;
+                                        }
+                                    } else {
+                                        this.query.ingredients[key].enabled = false;
+                                        this.query.ingredients[key].min = null;
+                                        this.query.ingredients[key].max = null;
+                                    }
+                                }
+                            }
+                        } catch (error) {
+                        }
+                    },
+
+                    hasError(key) {
+                        return !!(this.validationErrors[key] || Object.keys(this.validationErrors).some(k => k.startsWith(key + '.')));
+                    },
+                    getError(key) {
+                        if (this.validationErrors[key]) return this.validationErrors[key][0];
+                        const subKey = Object.keys(this.validationErrors).find(k => k.startsWith(key + '.'));
+                        if (subKey) return this.validationErrors[subKey][0];
+                        return null;
+                    }
+                };
+            });
+        });
+    </script>
+</x-hops.layout>
