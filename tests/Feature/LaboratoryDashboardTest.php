@@ -119,17 +119,14 @@ class LaboratoryDashboardTest extends TestCase
     {
         $member = User::factory()->teamMember()->create();
 
-        // 0 active researchers initially
         $response = $this->actingAs($member)->get(route("laboratory.dashboard"));
         $response->assertSee("Active Researchers");
         $response->assertSee("0");
 
-        // Member A creates an agenda -> 1 active researcher
         Agenda::factory()->for($member)->create();
         $response = $this->actingAs($member)->get(route("laboratory.dashboard"));
         $response->assertSee("1");
 
-        // Member B creates an agenda -> 2 active researchers
         $memberB = User::factory()->teamMember()->create();
         Agenda::factory()->for($memberB)->create();
         $response = $this->actingAs($member)->get(route("laboratory.dashboard"));
