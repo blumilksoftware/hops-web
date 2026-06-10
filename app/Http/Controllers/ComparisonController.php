@@ -69,7 +69,7 @@ class ComparisonController extends Controller
                 "score" => $result["similarity_score"] ?? 0.0,
                 "explainability" => $result["explainability"] ?? [],
                 "hop" => $hop,
-                "activeAromas" => $hop ? collect($hop->getActiveAromas())->map(fn(AromaProfile $aroma) => $aroma->label())->toArray() : [],
+                "activeAromas" => $hop ? collect($hop->getActiveAromas())->map(fn(AromaProfile $aroma): string => $aroma->label())->toArray() : [],
             ];
         })->toArray();
 

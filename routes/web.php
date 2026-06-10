@@ -7,6 +7,7 @@ use HopsWeb\Http\Controllers\Admin\HopQueryController;
 use HopsWeb\Http\Controllers\Admin\UserController;
 use HopsWeb\Http\Controllers\ComparisonController;
 use HopsWeb\Http\Controllers\HopController as PublicHopController;
+use HopsWeb\Http\Controllers\LaboratoryController;
 use HopsWeb\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,6 +17,8 @@ Route::get("/hops/{hop:slug}", [PublicHopController::class, "show"])->name("hops
 Route::middleware(["auth"])->group(function (): void {
     Route::get("/comparison", [ComparisonController::class, "index"])->name("comparison.index");
     Route::post("/comparison", [ComparisonController::class, "store"])->name("comparison.store");
+
+    Route::get("/laboratory", [LaboratoryController::class, "index"])->name("laboratory.dashboard")->middleware("is_team_member");
 
     Route::get("/profile", [ProfileController::class, "edit"])->name("profile.edit");
     Route::patch("/profile", [ProfileController::class, "update"])->name("profile.update");
