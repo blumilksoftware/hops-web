@@ -7,13 +7,16 @@ namespace Tests\Feature;
 use HopsWeb\Models\Agenda;
 use HopsWeb\Models\AgendaResult;
 use HopsWeb\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class LaboratoryDashboardTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function testGuestIsRedirectedToLogin(): void
     {
-        $response = $this->get(route("laboratory.dashboard"));
+        $response = $this->get(route("laboratory.index"));
 
         $response->assertRedirect("/login");
     }
@@ -22,7 +25,7 @@ class LaboratoryDashboardTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route("laboratory.dashboard"));
+        $response = $this->actingAs($user)->get(route("laboratory.index"));
 
         $response->assertForbidden();
     }
@@ -50,7 +53,7 @@ class LaboratoryDashboardTest extends TestCase
             ->count(2)
             ->create();
 
-        $response = $this->actingAs($member)->get(route("laboratory.dashboard"));
+        $response = $this->actingAs($member)->get(route("laboratory.index"));
 
         $response->assertOk();
         $response->assertSee("Hop Variety A Experiment");
@@ -73,7 +76,7 @@ class LaboratoryDashboardTest extends TestCase
         $agendaA = Agenda::factory()->for($memberA)->create(["name" => "Member A Agenda"]);
         $agendaB = Agenda::factory()->for($memberB)->create(["name" => "Member B Agenda"]);
 
-        $response = $this->actingAs($memberA)->get(route("laboratory.dashboard"));
+        $response = $this->actingAs($memberA)->get(route("laboratory.index"));
 
         $response->assertOk();
         $response->assertSee("Member A Agenda");
@@ -83,17 +86,17 @@ class LaboratoryDashboardTest extends TestCase
     public function testNavigationLinkVisibility(): void
     {
         $response = $this->get(route("hops.index"));
-        $response->assertDontSee(route("laboratory.dashboard"));
+        $response->assertDontSee(route("laboratory.index"));
         $response->assertDontSee("Laboratory");
 
         $user = User::factory()->create();
         $response = $this->actingAs($user)->get(route("hops.index"));
-        $response->assertDontSee(route("laboratory.dashboard"));
+        $response->assertDontSee(route("laboratory.index"));
         $response->assertDontSee("Laboratory");
 
         $member = User::factory()->teamMember()->create();
         $response = $this->actingAs($member)->get(route("hops.index"));
-        $response->assertSee(route("laboratory.dashboard"));
+        $response->assertSee(route("laboratory.index"));
         $response->assertSee("Laboratory");
     }
 
@@ -106,7 +109,7 @@ class LaboratoryDashboardTest extends TestCase
             ->count(15)
             ->create();
 
-        $response = $this->actingAs($member)->get(route("laboratory.dashboard"));
+        $response = $this->actingAs($member)->get(route("laboratory.index"));
 
         $response->assertOk();
 
@@ -119,17 +122,17 @@ class LaboratoryDashboardTest extends TestCase
     {
         $member = User::factory()->teamMember()->create();
 
-        $response = $this->actingAs($member)->get(route("laboratory.dashboard"));
+        $response = $this->actingAs($member)->get(route("laboratory.index"));
         $response->assertSee("Active Researchers");
         $response->assertSee("0");
 
         Agenda::factory()->for($member)->create();
-        $response = $this->actingAs($member)->get(route("laboratory.dashboard"));
+        $response = $this->actingAs($member)->get(route("laboratory.index"));
         $response->assertSee("1");
 
         $memberB = User::factory()->teamMember()->create();
         Agenda::factory()->for($memberB)->create();
-        $response = $this->actingAs($member)->get(route("laboratory.dashboard"));
+        $response = $this->actingAs($member)->get(route("laboratory.index"));
         $response->assertSee("2");
     }
 }

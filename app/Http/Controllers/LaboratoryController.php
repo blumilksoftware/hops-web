@@ -11,7 +11,7 @@ use Illuminate\View\View;
 
 class LaboratoryController extends Controller
 {
-    public function index(Request $request): View
+    public function __invoke(Request $request): View
     {
         $user = $request->user();
 
@@ -20,28 +20,23 @@ class LaboratoryController extends Controller
             ->latest()
             ->paginate(10);
 
-        $lastActivityResult = AgendaResult::whereHas("agenda", function ($query) use ($user): void {
-            $query->where("user_id", $user->id);
-        })->latest()->first();
+        $lastActivityResult = AgendaResult::query()->whereHas("agenda", fn($query) => $query->where("user_id", $user->id))->latest()->first();
 
         $lastAgendaCreated = $user->agendas()->latest()->first();
 
-        $lastActivity = null;
-
-        if ($lastActivityResult && $lastAgendaCreated) {
-            $lastActivity = $lastActivityResult->created_at->gt($lastAgendaCreated->created_at) 
-                ? $lastActivityResult->created_at 
-                : $lastAgendaCreated->created_at;
-        } else {
-            $lastActivity = $lastActivityResult?->created_at ?? $lastAgendaCreated?->created_at;
-        }
+        $lastActivity = match (true) {
+            $lastActivityResult !== null && $lastAgendaCreated !== null => $lastActivityResult->created_at->gt($lastAgendaCreated->created_at)
+                ? $lastActivityResult->created_at
+                : $lastAgendaCreated->created_at,
+            $lastActivityResult !== null => $lastActivityResult->created_at,
+            $lastAgendaCreated !== null => $lastAgendaCreated->created_at,
+            default => null,
+        };
 
         $stats = [
             "total_agendas" => $user->agendas()->count(),
-            "total_runs" => AgendaResult::whereHas("agenda", function ($query) use ($user): void {
-                $query->where("user_id", $user->id);
-            })->count(),
-            "active_researchers" => User::whereHas("agendas")->count(),
+            "total_runs" => AgendaResult::query()->whereHas("agenda", fn($query) => $query->where("user_id", $user->id))->count(),
+            "active_researchers" => User::query()->whereHas("agendas")->count(),
             "last_activity" => $lastActivity,
         ];
 

@@ -28,8 +28,8 @@
                     <x-lucide-clipboard-list class="w-6 h-6" />
                 </div>
                 <div>
-                    <span class="block text-2xl font-black text-hops-ink">{{ $stats['total_agendas'] }}</span>
-                    <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider">{{ __('Total Agendas') }}</span>
+                    <span class="block text-2xl font-black text-hops-ink">{{ $stats["total_agendas"] }}</span>
+                    <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider">{{ __("Total Agendas") }}</span>
                 </div>
             </div>
 
@@ -38,8 +38,8 @@
                     <x-lucide-git-commit class="w-6 h-6 rotate-90" />
                 </div>
                 <div>
-                    <span class="block text-2xl font-black text-hops-ink">{{ $stats['total_runs'] }}</span>
-                    <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider">{{ __('Experimental Runs') }}</span>
+                    <span class="block text-2xl font-black text-hops-ink">{{ $stats["total_runs"] }}</span>
+                    <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider">{{ __("Experimental Runs") }}</span>
                 </div>
             </div>
 
@@ -48,8 +48,8 @@
                     <x-lucide-users class="w-6 h-6" />
                 </div>
                 <div>
-                    <span class="block text-2xl font-black text-hops-ink">{{ $stats['active_researchers'] }}</span>
-                    <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider">{{ __('Active Researchers') }}</span>
+                    <span class="block text-2xl font-black text-hops-ink">{{ $stats["active_researchers"] }}</span>
+                    <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider">{{ __("Active Researchers") }}</span>
                 </div>
             </div>
 
@@ -59,9 +59,9 @@
                 </div>
                 <div class="overflow-hidden">
                     <span class="block text-sm font-bold text-hops-ink truncate">
-                        {{ $stats['last_activity'] ? $stats['last_activity']->diffForHumans() : __('No activity yet') }}
+                        {{ $stats["last_activity"] ? $stats["last_activity"]->diffForHumans() : __("No activity yet") }}
                     </span>
-                    <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider">{{ __('Last Activity') }}</span>
+                    <span class="block text-xs text-gray-400 font-bold uppercase tracking-wider">{{ __("Last Activity") }}</span>
                 </div>
             </div>
         </div>
@@ -113,66 +113,66 @@
                                         </td>
                                         <td class="px-6 py-4">
                                             <div class="flex flex-wrap gap-2 items-center">
-                                                @if(!empty($agenda->query['target']['present']))
+                                                @if(!empty($agenda->query["target"]["present"]))
                                                     <div x-data="{ showAllTargets: false }" class="flex flex-wrap gap-1 items-center">
-                                                        @foreach($agenda->query['target']['present'] as $index => $hop)
+                                                        @foreach($agenda->query["target"]["present"] as $index => $hop)
                                                             <span x-show="showAllTargets || {{ $index }} < 2"
                                                                 class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-hops-light text-hops-dark border border-hops-mid/10 capitalize">
                                                                 <x-lucide-hop class="w-2.5 h-2.5" />
                                                                 {{ $hop }}
                                                             </span>
                                                         @endforeach
-                                                        @if(count($agenda->query['target']['present']) > 2)
+                                                        @if(count($agenda->query["target"]["present"]) > 2)
                                                             <button x-show="!showAllTargets" @click.stop="showAllTargets = true"
                                                                 class="text-[9px] text-gray-400 hover:text-hops-mid font-semibold cursor-pointer select-none">
-                                                                +{{ count($agenda->query['target']['present']) - 2 }} more
+                                                                +{{ count($agenda->query["target"]["present"]) - 2 }} more
                                                             </button>
                                                             <button x-show="showAllTargets" @click.stop="showAllTargets = false"
                                                                 class="text-[9px] text-gray-400 hover:text-hops-mid font-semibold cursor-pointer select-none">
-                                                                {{ __('less') }}
+                                                                {{ __("less") }}
                                                             </button>
                                                         @endif
                                                     </div>
                                                 @endif
 
-                                                @if(!empty($agenda->query['aroma']['present']))
+                                                @if(!empty($agenda->query["aroma"]["present"]))
                                                     <div x-data="{ showAllAromas: false }" class="flex flex-wrap gap-1 items-center">
-                                                        @foreach($agenda->query['aroma']['present'] as $index => $aroma)
+                                                        @foreach($agenda->query["aroma"]["present"] as $index => $aroma)
                                                             <span x-show="showAllAromas || {{ $index }} < 2"
                                                                 class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200/50 capitalize">
                                                                 <x-lucide-wind class="w-2.5 h-2.5" />
                                                                 {{ $aroma }}
                                                             </span>
                                                         @endforeach
-                                                        @if(count($agenda->query['aroma']['present']) > 2)
+                                                        @if(count($agenda->query["aroma"]["present"]) > 2)
                                                             <button x-show="!showAllAromas" @click.stop="showAllAromas = true"
                                                                 class="text-[9px] text-gray-400 hover:text-hops-mid font-semibold cursor-pointer select-none">
-                                                                +{{ count($agenda->query['aroma']['present']) - 2 }} more
+                                                                +{{ count($agenda->query["aroma"]["present"]) - 2 }} more
                                                             </button>
                                                             <button x-show="showAllAromas" @click.stop="showAllAromas = false"
                                                                 class="text-[9px] text-gray-400 hover:text-hops-mid font-semibold cursor-pointer select-none">
-                                                                {{ __('less') }}
+                                                                {{ __("less") }}
                                                             </button>
                                                         @endif
                                                     </div>
                                                 @endif
 
-                                                @if(empty($agenda->query['target']['present']) && empty($agenda->query['aroma']['present']))
-                                                    <span class="text-[10px] text-gray-400 italic">{{ __('Empty query bounds') }}</span>
+                                                @if(empty($agenda->query["target"]["present"]) && empty($agenda->query["aroma"]["present"]))
+                                                    <span class="text-[10px] text-gray-400 italic">{{ __("Empty query bounds") }}</span>
                                                 @endif
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-center w-32 whitespace-nowrap">
                                             <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-bold bg-hops-light text-hops-darkest">
-                                                {{ $agenda->results->count() }} {{ trans_choice('run|runs', $agenda->results->count()) }}
+                                                {{ $agenda->results->count() }} {{ trans_choice("run|runs", $agenda->results->count()) }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-gray-500 font-medium w-36 whitespace-nowrap">
-                                            {{ $agenda->created_at->format('M d, Y H:i') }}
+                                            {{ $agenda->created_at->format("M d, Y H:i") }}
                                         </td>
                                         <td class="px-6 py-4 text-right w-28 whitespace-nowrap">
                                             <button @click="expanded = !expanded" class="inline-flex items-center gap-1 text-[11px] font-bold text-hops-mid hover:text-hops-darkest transition-colors cursor-pointer select-none">
-                                                <span x-text="expanded ? '{{ __('Collapse') }}' : '{{ __('Inspect') }}'"></span>
+                                                <span x-text="expanded ? '{{ __("Collapse") }}' : '{{ __("Inspect") }}'"></span>
                                                 <span :class="expanded ? 'rotate-180' : ''" class="transition-transform duration-200 inline-block">
                                                     <x-lucide-chevron-down class="w-3.5 h-3.5" />
                                                 </span>
@@ -223,11 +223,11 @@
                                                                         </span>
                                                                     </div>
 
-                                                                    @if(!empty($run->parameters['weights']))
+                                                                    @if(!empty($run->parameters["weights"]))
                                                                         <div class="mb-3">
-                                                                            <span class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">{{ __('Weights Configuration') }}</span>
+                                                                            <span class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">{{ __("Weights Configuration") }}</span>
                                                                             <div class="grid grid-cols-4 gap-1.5 text-center">
-                                                                                @foreach($run->parameters['weights'] as $key => $weight)
+                                                                                @foreach($run->parameters["weights"] as $key => $weight)
                                                                                     <div class="bg-white border border-gray-100 rounded px-1.5 py-0.5">
                                                                                         <span class="block text-[9px] font-bold text-gray-400 capitalize">{{ $key }}</span>
                                                                                         <span class="block text-xs font-black text-hops-ink">{{ round($weight * 100) }}%</span>
@@ -239,18 +239,18 @@
 
                                                                     @if(!empty($run->response))
                                                                         <div>
-                                                                            <span class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">{{ __('Top Matches Similarity Score') }}</span>
+                                                                            <span class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">{{ __("Top Matches Similarity Score") }}</span>
                                                                             <div class="space-y-1.5">
                                                                                 @foreach(array_slice($run->response, 0, 3) as $matchIndex => $match)
                                                                                     <div class="flex items-center justify-between text-xs bg-white border border-gray-100 rounded-lg px-2.5 py-1.5">
                                                                                         <div class="flex items-center gap-1.5">
                                                                                             <span class="text-[10px] font-bold text-gray-400">{{ $matchIndex + 1 }}.</span>
-                                                                                            <span class="font-bold text-hops-ink uppercase">{{ $match['name'] }}</span>
+                                                                                            <span class="font-bold text-hops-ink uppercase">{{ $match["name"] }}</span>
                                                                                         </div>
                                                                                         <div class="flex items-center gap-2">
-                                                                                            <span class="font-black text-hops-darkest">{{ round(($match['score'] ?? 0) * 100) }}%</span>
+                                                                                            <span class="font-black text-hops-darkest">{{ round(($match["score"] ?? 0) * 100) }}%</span>
                                                                                             <div class="w-12 bg-gray-100 h-1.5 rounded-full overflow-hidden shrink-0">
-                                                                                                <div class="bg-hops-accent h-full" style="width: {{ ($match['score'] ?? 0) * 100 }}%"></div>
+                                                                                                <div class="bg-hops-accent h-full" style="width: {{ ($match["score"] ?? 0) * 100 }}%"></div>
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>

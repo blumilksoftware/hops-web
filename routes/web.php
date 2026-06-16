@@ -18,7 +18,7 @@ Route::middleware(["auth"])->group(function (): void {
     Route::get("/comparison", [ComparisonController::class, "index"])->name("comparison.index");
     Route::post("/comparison", [ComparisonController::class, "store"])->name("comparison.store");
 
-    Route::get("/laboratory", [LaboratoryController::class, "index"])->name("laboratory.dashboard")->middleware("is_team_member");
+    Route::get("/laboratory", LaboratoryController::class)->name("laboratory.index")->middleware("is_team_member");
 
     Route::get("/profile", [ProfileController::class, "edit"])->name("profile.edit");
     Route::patch("/profile", [ProfileController::class, "update"])->name("profile.update");

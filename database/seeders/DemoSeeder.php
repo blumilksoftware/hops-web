@@ -86,9 +86,9 @@ class DemoSeeder extends Seeder
             }
         }
 
-        HopQuery::factory(10)->withFullQuery()->for(User::first())->create();
+        HopQuery::factory(10)->withFullQuery()->for(User::query()->first())->create();
 
-        $users = User::inRandomOrder()->take(5)->get();
+        $users = User::query()->inRandomOrder()->take(5)->get();
 
         foreach ($users as $user) {
             HopQuery::factory()->count(rand(2, 5))->withFullQuery()->for($user)->create();
