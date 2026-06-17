@@ -125,16 +125,46 @@
                         </button>
                     </div>
                 @else
+                    @php
+                        $nextDirectionForName = ($sort === 'name' && $direction === 'asc') ? 'desc' : 'asc';
+                        $nextDirectionForCreated = ($sort === 'created_at' && $direction === 'asc') ? 'desc' : 'asc';
+                    @endphp
                     <div class="bg-white rounded-3xl border border-hops-light shadow-2xs overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-100">
                                 <thead class="bg-gray-50/50">
                                     <tr>
-                                        <th scope="col" class="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider w-1/3">{{ __('Agenda / Experiment') }}</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider w-1/3">
+                                            <a href="{{ route('laboratory.index', ['sort' => 'name', 'direction' => $nextDirectionForName]) }}" class="inline-flex items-center gap-1 hover:text-hops-ink transition-colors">
+                                                {{ __('Agenda / Experiment') }}
+                                                @if($sort === 'name')
+                                                    @if($direction === 'asc')
+                                                        <x-lucide-arrow-up class="w-3.5 h-3.5 text-hops-ink" />
+                                                    @else
+                                                        <x-lucide-arrow-down class="w-3.5 h-3.5 text-hops-ink" />
+                                                    @endif
+                                                @else
+                                                    <x-lucide-chevrons-up-down class="w-3.5 h-3.5 opacity-50" />
+                                                @endif
+                                            </a>
+                                        </th>
                                         <th scope="col" class="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('Creator') }}</th>
                                         <th scope="col" class="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ __('Query Highlights') }}</th>
                                         <th scope="col" class="px-6 py-4 text-center text-[10px] font-bold text-gray-400 uppercase tracking-wider w-32">{{ __('Runs') }}</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider w-36">{{ __('Created') }}</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider w-36">
+                                            <a href="{{ route('laboratory.index', ['sort' => 'created_at', 'direction' => $nextDirectionForCreated]) }}" class="inline-flex items-center gap-1 hover:text-hops-ink transition-colors">
+                                                {{ __('Created') }}
+                                                @if($sort === 'created_at')
+                                                    @if($direction === 'asc')
+                                                        <x-lucide-arrow-up class="w-3.5 h-3.5 text-hops-ink" />
+                                                    @else
+                                                        <x-lucide-arrow-down class="w-3.5 h-3.5 text-hops-ink" />
+                                                    @endif
+                                                @else
+                                                    <x-lucide-chevrons-up-down class="w-3.5 h-3.5 opacity-50" />
+                                                @endif
+                                            </a>
+                                        </th>
                                         <th scope="col" class="px-6 py-4 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider w-28">{{ __('Action') }}</th>
                                     </tr>
                                 </thead>

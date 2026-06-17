@@ -13,18 +13,30 @@ class LaboratoryController extends Controller
 {
     public function __invoke(Request $request): View
     {
-        $data = $this->getDashboardData($request->user());
+        $data = $this->getDashboardData($request->user(), $request);
         $data["activeTab"] = $request->query("tab", "dashboard");
 
         return view("laboratory.index", $data);
     }
 
-    public function getDashboardData(User $user): array
+    public function getDashboardData(User $user, ?Request $request = null): array
     {
+        $sort = $request ? $request->query("sort", "created_at") : "created_at";
+        $direction = $request ? $request->query("direction", "desc") : "desc";
+
+        if (!in_array($sort, ["name", "created_at"], true)) {
+            $sort = "created_at";
+        }
+
+        if (!in_array($direction, ["asc", "desc"], true)) {
+            $direction = "desc";
+        }
+
         $agendas = $user->agendas()
             ->with(["user", "results"])
-            ->latest()
-            ->paginate(10);
+            ->orderBy($sort, $direction)
+            ->paginate(10)
+            ->withQueryString();
 
         $lastActivityResult = AgendaResult::query()->whereHas("agenda", fn($query) => $query->where("user_id", $user->id))->latest()->first();
 
@@ -49,6 +61,8 @@ class LaboratoryController extends Controller
         return [
             "agendas" => $agendas,
             "stats" => $stats,
+            "sort" => $sort,
+            "direction" => $direction,
         ];
     }
 }

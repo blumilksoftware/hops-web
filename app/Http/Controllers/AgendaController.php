@@ -14,7 +14,7 @@ class AgendaController extends Controller
 {
     public function create(Request $request, LaboratoryController $laboratoryController): View
     {
-        $data = $laboratoryController->getDashboardData($request->user());
+        $data = $laboratoryController->getDashboardData($request->user(), $request);
         $data["activeTab"] = "create";
 
         return view("laboratory.index", $data);
