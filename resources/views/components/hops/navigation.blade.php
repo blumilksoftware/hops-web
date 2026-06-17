@@ -17,9 +17,12 @@
                     class="{{ request()->routeIs('comparison.*') ? 'text-hops-mid font-semibold' : 'text-gray-500 hover:text-hops-ink' }} text-sm transition">
                     {{ __('Comparison') }}
                 </a>
-                <a href="#" class="text-gray-500 hover:text-hops-ink text-sm transition">
-                    {{ __('Laboratory') }}
+                @if(Auth::user()?->is_team_member)
+                <a href="{{ route("laboratory.index") }}"
+                    class="{{ request()->routeIs("laboratory.*") ? "text-hops-mid font-semibold" : "text-gray-500 hover:text-hops-ink" }} text-sm transition">
+                    {{ __("Laboratory") }}
                 </a>
+                @endif
             </div>
 
             <div class="flex items-center space-x-4">
