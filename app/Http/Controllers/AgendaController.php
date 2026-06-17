@@ -7,13 +7,17 @@ namespace HopsWeb\Http\Controllers;
 use HopsWeb\Actions\CreateAgendaAction;
 use HopsWeb\Http\Requests\CreateAgendaRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AgendaController extends Controller
 {
-    public function create(): View
+    public function create(Request $request, LaboratoryController $laboratoryController): View
     {
-        return view("laboratory.agenda.create");
+        $data = $laboratoryController->getDashboardData($request->user());
+        $data["activeTab"] = "create";
+
+        return view("laboratory.index", $data);
     }
 
     public function store(CreateAgendaRequest $request, CreateAgendaAction $action): RedirectResponse
