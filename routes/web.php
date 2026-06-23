@@ -5,6 +5,7 @@ declare(strict_types=1);
 use HopsWeb\Http\Controllers\Admin\HopController as AdminHopController;
 use HopsWeb\Http\Controllers\Admin\HopQueryController;
 use HopsWeb\Http\Controllers\Admin\UserController;
+use HopsWeb\Http\Controllers\AgendaController;
 use HopsWeb\Http\Controllers\ComparisonController;
 use HopsWeb\Http\Controllers\HopController as PublicHopController;
 use HopsWeb\Http\Controllers\LaboratoryController;
@@ -18,7 +19,11 @@ Route::middleware(["auth"])->group(function (): void {
     Route::get("/comparison", [ComparisonController::class, "index"])->name("comparison.index");
     Route::post("/comparison", [ComparisonController::class, "store"])->name("comparison.store");
 
-    Route::get("/laboratory", LaboratoryController::class)->name("laboratory.index")->middleware("is_team_member");
+    Route::middleware("is_team_member")->prefix("laboratory")->name("laboratory.")->group(function (): void {
+        Route::get("/", LaboratoryController::class)->name("index");
+        Route::get("/agendas/create", [AgendaController::class, "create"])->name("agendas.create");
+        Route::post("/agendas", [AgendaController::class, "store"])->name("agendas.store");
+    });
 
     Route::get("/profile", [ProfileController::class, "edit"])->name("profile.edit");
     Route::patch("/profile", [ProfileController::class, "update"])->name("profile.update");

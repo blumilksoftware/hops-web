@@ -18,9 +18,9 @@
                     {{ __('Comparison') }}
                 </a>
                 @if(Auth::user()?->is_team_member)
-                <a href="{{ route("laboratory.index") }}"
-                    class="{{ request()->routeIs("laboratory.*") ? "text-hops-mid font-semibold" : "text-gray-500 hover:text-hops-ink" }} text-sm transition">
-                    {{ __("Laboratory") }}
+                <a href="{{ route('laboratory.index') }}"
+                    class="{{ request()->routeIs('laboratory.*') ? 'text-hops-mid font-semibold' : 'text-gray-500 hover:text-hops-ink' }} text-sm transition">
+                    {{ __('Laboratory') }}
                 </a>
                 @endif
             </div>
