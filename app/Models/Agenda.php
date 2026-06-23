@@ -30,9 +30,6 @@ class Agenda extends Model
         "name",
         "query",
     ];
-    protected $casts = [
-        "query" => "array",
-    ];
 
     public function user(): BelongsTo
     {
@@ -42,5 +39,12 @@ class Agenda extends Model
     public function results(): HasMany
     {
         return $this->hasMany(AgendaResult::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            "query" => "array",
+        ];
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 use HopsWeb\Http\Controllers\Admin\HopController as AdminHopController;
 use HopsWeb\Http\Controllers\Admin\HopQueryController;
 use HopsWeb\Http\Controllers\Admin\UserController;
+use HopsWeb\Http\Controllers\AgendaController;
 use HopsWeb\Http\Controllers\AgendaRunController;
 use HopsWeb\Http\Controllers\ComparisonController;
 use HopsWeb\Http\Controllers\HopController as PublicHopController;
@@ -21,6 +22,8 @@ Route::middleware(["auth"])->group(function (): void {
 
     Route::middleware("is_team_member")->prefix("laboratory")->name("laboratory.")->group(function (): void {
         Route::get("/", LaboratoryController::class)->name("index");
+        Route::get("/agendas/create", [AgendaController::class, "create"])->name("agendas.create");
+        Route::post("/agendas", [AgendaController::class, "store"])->name("agendas.store");
         Route::get("/agendas/{agenda}/runs/create", [AgendaRunController::class, "create"])->name("agendas.runs.create");
         Route::post("/agendas/{agenda}/runs", [AgendaRunController::class, "store"])->name("agendas.runs.store");
     });

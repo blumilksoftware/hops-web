@@ -49,9 +49,9 @@ class ImportHopVarietyJob implements ShouldQueue
 
         try {
             $upsert->execute($mapped);
-        } catch (ValidationException $e) {
+        } catch (ValidationException $exception) {
             Log::warning("ImportHopVarietyJob: Validation failed for {$this->filePath}", [
-                "errors" => $e->errors(),
+                "errors" => $exception->errors(),
             ]);
         }
     }
