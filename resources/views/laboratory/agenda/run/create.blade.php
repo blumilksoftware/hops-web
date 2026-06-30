@@ -276,7 +276,7 @@
                         <x-lucide-code class="w-4 h-4 text-hops-mid" />
                         <span class="text-sm font-bold text-hops-ink">{{ __('Generated Parameter Set JSON') }}</span>
                     </div>
-                    <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Live Preview') }}</span>
+                    <span class="text-xs text-gray-400 font-bold uppercase tracking-wider">{{ __('Live Preview') }}</span>
                 </div>
                 <div class="p-6">
                     <div class="bg-gray-900 rounded-xl p-5 border border-gray-800">
