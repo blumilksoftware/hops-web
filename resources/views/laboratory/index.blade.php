@@ -166,7 +166,7 @@
                                     </tr>
                                 </thead>
                                 @foreach($agendas as $agenda)
-                                    <tbody x-data="{ expanded: false }" class="divide-y divide-gray-100 bg-white">
+                                    <tbody x-data="{ expanded: false, selectedRuns: [] }" class="divide-y divide-gray-100 bg-white">
                                         <tr class="hover:bg-gray-50/30 transition-colors">
                                             <td class="px-6 py-4 w-1/3">
                                                 <div class="flex flex-col">
@@ -275,7 +275,15 @@
                                                                 <x-lucide-git-commit class="w-4 h-4 text-hops-mid rotate-90" />
                                                                 {{ __('Experimental Configuration Runs') }}
                                                             </span>
-                                                            <span class="text-[9px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Tuning History') }}</span>
+                                                            <div class="flex items-center gap-2">
+                                                                <a x-show="selectedRuns.length >= 2"
+                                                                   :href="'{{ route('laboratory.agendas.compare', $agenda) }}?' + selectedRuns.map(id => 'run_ids[]=' + id).join('&')"
+                                                                   class="inline-flex items-center gap-1 px-3 py-1 bg-hops-accent text-hops-darkest text-[10px] font-bold rounded-lg hover:bg-opacity-90 transition cursor-pointer select-none">
+                                                                    <x-lucide-columns-4 class="w-3 h-3" />
+                                                                    {{ __('Compare Selected') }} (<span x-text="selectedRuns.length"></span>)
+                                                                </a>
+                                                                <span x-show="selectedRuns.length < 2" class="text-[9px] text-gray-400 font-bold uppercase tracking-wider">{{ __('Tuning History') }}</span>
+                                                            </div>
                                                         </div>
 
                                                         @if($agenda->results->isEmpty())
@@ -288,9 +296,12 @@
                                                                 @foreach($agenda->results as $runIndex => $run)
                                                                     <div class="border border-gray-100 hover:border-hops-mid/20 rounded-xl p-3.5 bg-gray-50/30 transition-all">
                                                                         <div class="flex items-center justify-between mb-2">
-                                                                            <span class="text-[11px] font-black text-hops-darkest uppercase tracking-wider">
-                                                                                {{ __('Run #') }}{{ $runIndex + 1 }}
-                                                                            </span>
+                                                                            <div class="flex items-center gap-2">
+                                                                                <input type="checkbox" :value="{{ $run->id }}" x-model="selectedRuns" class="rounded border-gray-300 text-hops-mid focus:ring-hops-mid w-3.5 h-3.5 cursor-pointer">
+                                                                                <span class="text-[11px] font-black text-hops-darkest uppercase tracking-wider">
+                                                                                    {{ __('Run #') }}{{ $runIndex + 1 }}
+                                                                                </span>
+                                                                            </div>
                                                                             <span class="text-[10px] text-gray-400 font-medium">
                                                                                 {{ $run->created_at->diffForHumans() }}
                                                                             </span>

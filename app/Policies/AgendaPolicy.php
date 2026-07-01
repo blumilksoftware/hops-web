@@ -13,4 +13,14 @@ class AgendaPolicy
     {
         return $user->is_team_member && $user->id === $agenda->user_id;
     }
+
+    public function compare(User $user, Agenda $agenda): bool
+    {
+        return $user->is_team_member && $user->id === $agenda->user_id;
+    }
+
+    public function view(User $user, Agenda $agenda): bool
+    {
+        return $user->is_team_member && $user->id === $agenda->user_id;
+    }
 }
