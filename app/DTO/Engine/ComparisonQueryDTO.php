@@ -12,6 +12,8 @@ readonly class ComparisonQueryDTO
         public ?array $description = null,
         public ?array $ingredients = null,
         public ?array $feeling = null,
+        public ?array $weights = null,
+        public ?array $biochemicalWeights = null,
     ) {}
 
     public static function fromArray(array $data): self
@@ -22,6 +24,8 @@ readonly class ComparisonQueryDTO
             description: $data["description"] ?? null,
             ingredients: $data["ingredients"] ?? null,
             feeling: $data["feeling"] ?? null,
+            weights: $data["weights"] ?? null,
+            biochemicalWeights: $data["biochemical_weights"] ?? $data["biochemicalWeights"] ?? null,
         );
     }
 
@@ -33,6 +37,8 @@ readonly class ComparisonQueryDTO
             "description" => $this->description,
             "ingredients" => $this->ingredients,
             "feeling" => $this->feeling,
+            "weights" => $this->weights,
+            "biochemical_weights" => $this->biochemicalWeights,
         ], fn($value): bool => $value !== null);
     }
 }

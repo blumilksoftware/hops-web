@@ -298,11 +298,25 @@
 
                                                                         @if(!empty($run->parameters["weights"]))
                                                                             <div class="mb-3">
-                                                                                <span class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">{{ __("Weights Configuration") }}</span>
+                                                                                <span class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">{{ __("Module Weights") }}</span>
                                                                                 <div class="grid grid-cols-4 gap-1.5 text-center">
                                                                                     @foreach($run->parameters["weights"] as $key => $weight)
                                                                                         <div class="bg-white border border-gray-100 rounded px-1.5 py-0.5">
                                                                                             <span class="block text-[9px] font-bold text-gray-400 capitalize">{{ $key }}</span>
+                                                                                            <span class="block text-xs font-black text-hops-ink">{{ round($weight * 100) }}%</span>
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                </div>
+                                                                            </div>
+                                                                        @endif
+
+                                                                        @if(!empty($run->parameters["biochemical_weights"]))
+                                                                            <div class="mb-3">
+                                                                                <span class="block text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1">{{ __("Biochemical Weights") }}</span>
+                                                                                <div class="grid grid-cols-4 gap-1.5 text-center">
+                                                                                    @foreach($run->parameters["biochemical_weights"] as $key => $weight)
+                                                                                        <div class="bg-white border border-gray-100 rounded px-1.5 py-0.5">
+                                                                                            <span class="block text-[9px] font-bold text-gray-400 capitalize truncate" title="{{ str_replace('_', ' ', $key) }}">{{ str_replace('_', ' ', $key) }}</span>
                                                                                             <span class="block text-xs font-black text-hops-ink">{{ round($weight * 100) }}%</span>
                                                                                         </div>
                                                                                     @endforeach

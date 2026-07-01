@@ -115,6 +115,10 @@ class CreateAgendaRunTest extends TestCase
         $this->assertEqualsWithDelta(0.10, $run->parameters["module_weights"]["feeling"], 0.001);
         $this->assertEqualsWithDelta(0.20, $run->parameters["biochemical_weights"]["alpha_acid"], 0.001);
         $this->assertEqualsWithDelta(0.05, $run->parameters["biochemical_weights"]["linalool"], 0.001);
+        $this->assertIsArray($run->response);
+        $this->assertNotEmpty($run->response);
+        $this->assertEquals("Cascade", $run->response[0]["name"]);
+        $this->assertEquals(0.95, $run->response[0]["score"]);
     }
 
     public function testModuleWeightsNotSummingToOneAreRejected(): void
