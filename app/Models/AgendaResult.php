@@ -27,13 +27,17 @@ class AgendaResult extends Model
         "parameters",
         "response",
     ];
-    protected $casts = [
-        "parameters" => "array",
-        "response" => "array",
-    ];
 
     public function agenda(): BelongsTo
     {
         return $this->belongsTo(Agenda::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            "parameters" => "array",
+            "response" => "array",
+        ];
     }
 }

@@ -21,7 +21,6 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="{ activeTab: '{{ $activeTab ?? 'dashboard' }}' }">
-        
         @if(session("success"))
             <div class="mb-6 p-4 bg-green-50 border border-green-100 rounded-2xl flex gap-3 items-center">
                 <x-lucide-check-circle class="w-4 h-4 text-green-600 shrink-0" />
@@ -29,7 +28,6 @@
             </div>
         @endif
 
-        <!-- Tab Switcher -->
         <div class="flex border-b border-gray-200 mb-8 gap-6">
             <button @click="activeTab = 'dashboard'"
                 :class="activeTab === 'dashboard' ? 'border-hops-ink text-hops-ink font-bold border-b-2' : 'border-transparent text-gray-400 hover:text-gray-600'"
@@ -45,7 +43,6 @@
             </button>
         </div>
 
-        <!-- Dashboard Tab Content -->
         <div x-show="activeTab === 'dashboard'" x-transition>
             <!-- Stats Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
@@ -165,7 +162,7 @@
                                                 @endif
                                             </a>
                                         </th>
-                                        <th scope="col" class="px-6 py-4 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider w-28">{{ __('Action') }}</th>
+                                        <th scope="col" class="px-6 py-4 text-right text-[10px] font-bold text-gray-400 uppercase tracking-wider w-48">{{ __('Actions') }}</th>
                                     </tr>
                                 </thead>
                                 @foreach($agendas as $agenda)
@@ -239,13 +236,20 @@
                                             <td class="px-6 py-4 text-sm text-gray-500 font-medium w-36 whitespace-nowrap">
                                                 {{ $agenda->created_at->format("M d, Y H:i") }}
                                             </td>
-                                            <td class="px-6 py-4 text-right w-28 whitespace-nowrap">
-                                                <button @click="expanded = !expanded" class="inline-flex items-center gap-1 text-[11px] font-bold text-hops-mid hover:text-hops-darkest transition-colors cursor-pointer select-none">
-                                                    <span x-text="expanded ? '{{ __("Collapse") }}' : '{{ __("Inspect") }}'"></span>
-                                                    <span :class="expanded ? 'rotate-180' : ''" class="transition-transform duration-200 inline-block">
-                                                        <x-lucide-chevron-down class="w-3.5 h-3.5" />
-                                                    </span>
-                                                </button>
+                                            <td class="px-6 py-4 text-right w-48 whitespace-nowrap">
+                                                <div class="flex items-center justify-end gap-3">
+                                                    <a href="{{ route('laboratory.agendas.runs.create', $agenda) }}"
+                                                        class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-hops-ink text-white text-xs font-bold rounded-xl hover:bg-opacity-90 transition">
+                                                        <x-lucide-sliders-horizontal class="w-3.5 h-3.5" />
+                                                        {{ __('New Run') }}
+                                                    </a>
+                                                    <button @click="expanded = !expanded" class="inline-flex items-center gap-1 text-[11px] font-bold text-hops-mid hover:text-hops-darkest transition-colors cursor-pointer select-none">
+                                                        <span x-text="expanded ? '{{ __("Collapse") }}' : '{{ __("Inspect") }}'"></span>
+                                                        <span :class="expanded ? 'rotate-180' : ''" class="transition-transform duration-200 inline-block">
+                                                            <x-lucide-chevron-down class="w-3.5 h-3.5" />
+                                                        </span>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
 
@@ -328,103 +332,103 @@
                                                                             </div>
                                                                         @endif
                                                                     </div>
-                                                                @endforeach
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                @endforeach
-                            </table>
-                        </div>
-                    </div>
+                                                                 @endforeach
+                                                             </div>
+                                                         @endif
+                                                     </div>
+                                                 </div>
+                                             </td>
+                                         </tr>
+                                     </tbody>
+                                 @endforeach
+                             </table>
+                         </div>
+                     </div>
 
-                    <div class="mt-6">
-                        {{ $agendas->links() }}
-                    </div>
-                @endif
-            </div>
-        </div>
+                     <div class="mt-6">
+                         {{ $agendas->links() }}
+                     </div>
+                 @endif
+             </div>
+         </div>
 
-        <!-- Create Agenda Tab Content -->
-        <div x-show="activeTab === 'create'" x-transition>
-            <div class="max-w-3xl mx-auto">
-                <div class="bg-white rounded-3xl border border-hops-light shadow-2xs overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-100 flex items-center gap-2">
-                        <x-lucide-clipboard-list class="w-4 h-4 text-hops-mid" />
-                        <span class="text-sm font-bold text-hops-ink">{{ __('Agenda Details') }}</span>
-                    </div>
+         <!-- Create Agenda Tab Content -->
+         <div x-show="activeTab === 'create'" x-transition>
+             <div class="max-w-3xl mx-auto">
+                 <div class="bg-white rounded-3xl border border-hops-light shadow-2xs overflow-hidden">
+                     <div class="px-6 py-5 border-b border-gray-100 flex items-center gap-2">
+                         <x-lucide-clipboard-list class="w-4 h-4 text-hops-mid" />
+                         <span class="text-sm font-bold text-hops-ink">{{ __('Agenda Details') }}</span>
+                     </div>
 
-                    <form method="POST" action="{{ route('laboratory.agendas.store') }}" class="p-6 space-y-6">
-                        @csrf
+                     <form method="POST" action="{{ route('laboratory.agendas.store') }}" class="p-6 space-y-6">
+                         @csrf
 
-                        @if($errors->any())
-                            <div class="p-4 bg-red-50 border border-red-100 rounded-2xl flex gap-3 items-start">
-                                <x-lucide-alert-circle class="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
-                                <ul class="text-sm text-red-700 space-y-1">
-                                    @foreach($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+                         @if($errors->any())
+                             <div class="p-4 bg-red-50 border border-red-100 rounded-2xl flex gap-3 items-start">
+                                 <x-lucide-alert-circle class="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                                 <ul class="text-sm text-red-700 space-y-1">
+                                     @foreach($errors->all() as $error)
+                                         <li>{{ $error }}</li>
+                                     @endforeach
+                                 </ul>
+                             </div>
+                         @endif
 
-                        <div>
-                            <x-input-label for="name" :value="__('Agenda Name')" />
-                            <x-text-input
-                                id="name"
-                                name="name"
-                                type="text"
-                                class="mt-1 block w-full"
-                                :value="old('name')"
-                                placeholder="{{ __('e.g. Alpha tuning session') }}"
-                                required
-                                autofocus
-                            />
-                            <x-input-error :messages="$errors->get('name')" class="mt-2" />
-                        </div>
+                         <div>
+                             <x-input-label for="name" :value="__('Agenda Name')" />
+                             <x-text-input
+                                 id="name"
+                                 name="name"
+                                 type="text"
+                                 class="mt-1 block w-full"
+                                 :value="old('name')"
+                                 placeholder="{{ __('e.g. Alpha tuning session') }}"
+                                 required
+                                 autofocus
+                             />
+                             <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                         </div>
 
-                        <div>
-                            <x-input-label for="query_json" :value="__('Base Query (JSON, optional)')" />
-                            <p class="text-xs text-gray-400 mt-1 mb-2">
-                                {{ __('Provide a JSON object defining the base query constraints. Leave empty to start with no constraints.') }}
-                            </p>
-                            <textarea
-                                id="query_json"
-                                name="query_json"
-                                rows="12"
-                                class="mt-1 block w-full rounded-md shadow-sm font-mono text-xs {{ $errors->has('query_json') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 text-red-900' : 'border-hops-warm focus:border-hops-accent focus:ring-hops-accent' }}"
-                                placeholder='{
-  "target": { "present": [], "absent": [] },
-  "aroma": { "present": [], "absent": [] },
-  "description": { "present": [], "absent": [] },
-  "ingredients": {
-    "alphas": null, "betas": null, "cohumulones": null,
-    "polyphenols": null, "xanthohumol": null,
-    "oils": null, "farnesenes": null, "linalool": null
-  },
-  "feeling": { "bitterness": null, "aromaticity": null }
-}'
-                            >{{ old('query_json') }}</textarea>
-                            <x-input-error :messages="$errors->get('query_json')" class="mt-2" />
-                        </div>
+                         <div>
+                             <x-input-label for="query_json" :value="__('Base Query (JSON, optional)')" />
+                             <p class="text-xs text-gray-400 mt-1 mb-2">
+                                 {{ __('Provide a JSON object defining the base query constraints. Leave empty to start with no constraints.') }}
+                             </p>
+                             <textarea
+                                 id="query_json"
+                                 name="query_json"
+                                 rows="12"
+                                 class="mt-1 block w-full rounded-md shadow-sm font-mono text-xs {{ $errors->has('query_json') ? 'border-red-500 focus:border-red-500 focus:ring-red-500 text-red-900' : 'border-hops-warm focus:border-hops-accent focus:ring-hops-accent' }}"
+                                 placeholder='{
+   "target": { "present": [], "absent": [] },
+   "aroma": { "present": [], "absent": [] },
+   "description": { "present": [], "absent": [] },
+   "ingredients": {
+     "alphas": null, "betas": null, "cohumulones": null,
+     "polyphenols": null, "xanthohumol": null,
+     "oils": null, "farnesenes": null, "linalool": null
+   },
+   "feeling": { "bitterness": null, "aromaticity": null }
+ }'
+                             >{{ old('query_json') }}</textarea>
+                             <x-input-error :messages="$errors->get('query_json')" class="mt-2" />
+                         </div>
 
-                        <div class="flex items-center justify-end gap-3 pt-2">
-                            <button type="button" @click="activeTab = 'dashboard'"
-                                class="px-4 py-2 text-xs font-bold text-gray-500 hover:text-hops-ink transition cursor-pointer">
-                                {{ __('Cancel') }}
-                            </button>
-                            <button type="submit"
-                                class="inline-flex items-center gap-1.5 px-5 py-2.5 bg-hops-ink text-white text-xs font-bold rounded-xl hover:bg-opacity-90 transition cursor-pointer">
-                                <x-lucide-save class="w-3.5 h-3.5" />
-                                {{ __('Save Agenda') }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+                         <div class="flex items-center justify-end gap-3 pt-2">
+                             <button type="button" @click="activeTab = 'dashboard'"
+                                 class="px-4 py-2 text-xs font-bold text-gray-500 hover:text-hops-ink transition cursor-pointer">
+                                 {{ __('Cancel') }}
+                             </button>
+                             <button type="submit"
+                                 class="inline-flex items-center gap-1.5 px-5 py-2.5 bg-hops-ink text-white text-xs font-bold rounded-xl hover:bg-opacity-90 transition cursor-pointer">
+                                 <x-lucide-save class="w-3.5 h-3.5" />
+                                 {{ __('Save Agenda') }}
+                             </button>
+                         </div>
+                     </form>
+                 </div>
+             </div>
+         </div>
     </div>
 </x-hops.layout>
