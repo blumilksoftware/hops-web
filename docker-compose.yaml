@@ -56,7 +56,7 @@ services:
         restart: no
 
     mailpit:
-      image: axllent/mailpit:v1.29.6@sha256:0b5c5f7ffd3c93474baa7fd3869c1462e5a3d03256ed0933dfc0e7d81d794036
+      image: axllent/mailpit:v1.29.7@sha256:757f22b56c1da03570afdb3d259effe5091018008a81bbedc8158cee7e16fdbc
       container_name: hops-web-mailpit-dev
       labels:
         - "traefik.enable=true"
@@ -84,7 +84,7 @@ services:
         - hops-web-mailpit-data:/data
 
     redis:
-        image: redis:8.6.2-trixie@sha256:1f073813b641755b70b0200da64131bbeeb4ec5b633ca67772229b49820caafa
+        image: redis:8.6.4-trixie@sha256:a051e4f48a5d0ceda6554974f3ad0f5369f4479197f36829332c1325cecad2b7
         container_name: hops-web-redis-dev
         ports:
             - ${DOCKER_REDIS_HOST_PORT:-63852}:6379
